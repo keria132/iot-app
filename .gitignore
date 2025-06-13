@@ -1,0 +1,20 @@
+# frontend
+/frontend/node_modules
+/frontend/package-lock.json
+
+# frontend testing
+/frontend/coverage
+
+# next
+/frontend/.next/
+/frontend/out/
+
+# frontend production
+/frontend/build
+
+# frontend env files (can opt-in for committing if needed)
+/frontend/.env*
+
+# typescript
+/frontend/*.tsbuildinfo
+/frontend/next-env.d.ts
