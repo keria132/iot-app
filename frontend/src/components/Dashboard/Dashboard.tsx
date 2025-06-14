@@ -1,6 +1,6 @@
 import AirConditioner from '../Devices/AirConditioner';
 import TemperatureModule from '../Devices/TemperatureModule';
-import WeatherWidget from '../Devices/WeatherWidget';
+import WeatherWidget from './WeatherWidget';
 
 const Dashboard = () => (
   <section className='flex items-start gap-4'>
