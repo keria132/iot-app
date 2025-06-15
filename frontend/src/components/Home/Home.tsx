@@ -1,6 +1,7 @@
 import Dashboard from '@/components/Dashboard/Dashboard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { navigationItems } from './constants';
+import DevicesPanel from '../Devices/DevicesPanel';
 
 const Home = () => (
   <Tabs defaultValue='Dashboard' className='gap-y-8'>
@@ -13,6 +14,9 @@ const Home = () => (
     </TabsList>
     <TabsContent value='Dashboard'>
       <Dashboard />
+    </TabsContent>
+    <TabsContent value='Devices'>
+      <DevicesPanel />
     </TabsContent>
   </Tabs>
 );
