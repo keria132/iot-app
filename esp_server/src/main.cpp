@@ -45,6 +45,7 @@ void setup() {
     JsonDocument doc;
     doc["temperature"] = mockTemp;
     doc["humidity"] = mockHum;
+    doc["signalStrength"] = rssi;
     String response;
     serializeJson(doc, response);
 
