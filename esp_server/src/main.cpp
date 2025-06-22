@@ -8,8 +8,9 @@
 
 #define WIFI_SSID "Tobik_Hata_EXT"
 #define WIFI_PASSWORD "P4npYfYS"
+#define DHTTYPE DHT22
+#define DHTPIN 5
 
-bool relayState = false;
 const char *ssid = WIFI_SSID;
 const char *password = WIFI_PASSWORD;
 
@@ -18,13 +19,20 @@ IPAddress gateway(192, 168, 0, 1);
 IPAddress subnet(255, 255, 255, 0);
 
 AsyncWebServer server(80);
+DHT dht(DHTPIN, DHTTYPE);
+float temp = 0.0;
+float hum = 0.0;
+unsigned long lastReadTime = 0;
+const unsigned long readInterval = 3000;
 
 void connectWiFi();
 
 void setup() {
   Serial.begin(115200);
+  dht.begin();
 
   connectWiFi();
+  WiFi.setAutoReconnect(true);
   
   if (!LittleFS.begin()) {
       Serial.println("LittleFS Mount Failed");
@@ -32,22 +40,28 @@ void setup() {
       return;
   }
 
+  DefaultHeaders::Instance().addHeader("Access-Control-Allow-Origin", "*");
+  DefaultHeaders::Instance().addHeader("Access-Control-Allow-Methods", "DELETE, POST, GET, OPTIONS");
+  DefaultHeaders::Instance().addHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Access-Control-Allow-Origin, Content-Type, Authorization, X-Requested-With");
+
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
     Serial.println("server on");
     request->send(200, "text/plain", "Hello World!");
   });
 
   server.on("/api/dht", HTTP_GET, [](AsyncWebServerRequest *request) {
+    Serial.println("Data requested");
+
     int32_t rssi = WiFi.RSSI();
-    float mockTemp = 2.2f;
-    float mockHum = 0.6f;
     
     JsonDocument doc;
-    doc["temperature"] = mockTemp;
-    doc["humidity"] = mockHum;
+    doc["temperature"] = temp;
+    doc["humidity"] = hum;
     doc["signalStrength"] = rssi;
+
     String response;
     serializeJson(doc, response);
+    Serial.println("Send back response");
 
     request->send(200, "application/json", response);
   });
@@ -59,6 +73,20 @@ void loop() {
   if (WiFi.status() != WL_CONNECTED) {
     Serial.println("WiFi Disconnected! Reconnecting...");
     connectWiFi();
+  }
+
+  if (millis() - lastReadTime >= readInterval) {
+    lastReadTime = millis();
+    float newTemp = dht.readTemperature();
+    float newHum = dht.readHumidity();
+
+    if (!isnan(newTemp) && !isnan(newHum)) {
+      temp = newTemp;
+      hum = newHum;
+      Serial.printf("Temp: %.2f, Hum: %.2f\n", temp, hum);
+    } else {
+      Serial.println("Failed to read from DHT sensor");
+    }
   }
 }
 

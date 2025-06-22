@@ -3,6 +3,7 @@ import './globals.css';
 import { Manrope } from 'next/font/google';
 import { ReactNode } from 'react';
 import ThemeProvider from '@/components/ui/theme-provider';
+import ReactQueryProvider from './providers';
 
 const manrope = Manrope({ subsets: ['latin'] });
 
@@ -25,7 +26,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <ReactQueryProvider>{children}</ReactQueryProvider>
         </ThemeProvider>
       </body>
     </html>

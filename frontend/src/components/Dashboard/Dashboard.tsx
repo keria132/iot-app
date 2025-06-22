@@ -1,12 +1,12 @@
 import AirConditioner from '../Devices/AirConditioner';
-import TemperatureModule from '../Devices/TemperatureModule';
+import DHTModule from '../Devices/DHTModule';
 import WeatherWidget from './WeatherWidget';
 
 const Dashboard = () => (
   <section className='flex items-start gap-4'>
     <AirConditioner />
     <WeatherWidget />
-    <TemperatureModule />
+    <DHTModule ip='http://192.168.0.100' />
   </section>
 );
 
