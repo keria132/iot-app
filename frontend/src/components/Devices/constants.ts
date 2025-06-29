@@ -12,12 +12,12 @@ export const newDeviceFields = [
     label: 'Local IP',
     id: 'deviceIp',
     name: 'ip',
-    defaultValue: '192.168.0.100',
+    defaultValue: '192.168.0.101',
   },
   {
-    label: 'Assigned room',
-    id: 'deviceRoom',
-    name: 'room',
-    defaultValue: 'Main Hall',
+    label: 'Device type',
+    id: 'deviceType',
+    name: 'type',
+    defaultValue: 'Sensor',
   },
 ];

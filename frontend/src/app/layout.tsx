@@ -4,6 +4,7 @@ import { Manrope } from 'next/font/google';
 import { ReactNode } from 'react';
 import ThemeProvider from '@/components/ui/theme-provider';
 import ReactQueryProvider from './providers';
+import { Toaster } from '@/components/ui/sonner';
 
 const manrope = Manrope({ subsets: ['latin'] });
 
@@ -27,6 +28,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <ReactQueryProvider>{children}</ReactQueryProvider>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
