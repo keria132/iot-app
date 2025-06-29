@@ -1,4 +1,4 @@
-interface GetDHTSensorData {
+interface GetDHTSensorPayload {
   temperature: number;
   humidity: number;
   signalStrength: number;
@@ -6,7 +6,7 @@ interface GetDHTSensorData {
 
 export const getDHTSensorData = async (
   deviceIp: string
-): Promise<GetDHTSensorData> => {
+): Promise<GetDHTSensorPayload> => {
   const response = await fetch(deviceIp + '/api/dht');
   if (!response.ok) {
     throw new Error(`Request error! Error status: ${response.status}`);
