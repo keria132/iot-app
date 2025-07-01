@@ -13,7 +13,7 @@ const useAddDeviceMutation = () => {
       toast.success('Device successfully added!');
     },
     onError: error => {
-      toast.error('Error: ' + error);
+      toast.error('Error: ' + error.message);
     },
   });
 };

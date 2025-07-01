@@ -86,8 +86,43 @@ void setup() {
     request->send(200, "text/plain", "ok");
   });
 
-  server.on("/api/devices", HTTP_POST, [](AsyncWebServerRequest *request) {
-    request->send(200);
+  server.on("/api/devices", HTTP_POST, [](AsyncWebServerRequest *request) {}, NULL, [](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
+    Serial.println("Handling device POST request");
+
+    static String body = "";
+    body += String((char*)data).substring(0, len);
+
+    if (index + len == total) {
+      JsonDocument doc;
+      DeserializationError error = deserializeJson(doc, body);
+
+      if (error) {
+        request->send(400, "text/plain", "Invalid JSON");
+        body = "";
+        return;
+      }
+
+      String name = doc["name"] | "";
+      String ip = doc["ip"] | "";
+      String type = doc["type"] | "";
+
+      bool exists = false;
+      for (const auto& d : devices) {
+        if (d.ip == ip) {
+          exists = true;
+          break;
+        }
+      }
+
+      if (exists) {
+        request->send(409, "text/plain", "Device with this IP or name already exists");
+      } else {
+        addDevice(name, ip, type);
+        request->send(200, "text/plain", "Device added");
+      }
+
+      body = "";
+    }
   });
 
   server.onNotFound([](AsyncWebServerRequest *request) {
