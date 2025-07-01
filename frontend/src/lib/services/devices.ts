@@ -1,4 +1,4 @@
-import { MAIN_HUB_IP } from '../constants';
+import { MAIN_HUB_IP, RESPONSE_STATUS } from '../constants';
 
 interface AddDevicePayload {
   name: string;
@@ -17,6 +17,8 @@ export const addDevice = async (device: AddDevicePayload) => {
   });
 
   if (!response.ok) {
-    throw new Error(`Request error! Error status: ${response.status}`);
+    throw new Error(
+      `Request error! Status: ${RESPONSE_STATUS[response.status] ?? response.status}`
+    );
   }
 };
