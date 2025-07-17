@@ -18,7 +18,7 @@ const DHTModule = ({ ip, name = 'DHT Sensor' }: DHTModuleProps) => {
     error,
   } = useQuery({
     queryKey: ['DHTSensor'],
-    queryFn: async () => getDHTSensorData(ip),
+    queryFn: async () => getDHTSensorData('http://' + ip),
     refetchInterval: 7000,
     staleTime: 20000,
     initialData: { temperature: 0, humidity: 0, signalStrength: -100 },
