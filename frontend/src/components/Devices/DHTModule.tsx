@@ -5,13 +5,9 @@ import DeviceStatus from '../ui/device-status';
 import { useQuery } from '@tanstack/react-query';
 import { getDHTSensorData } from '@/lib/services/sensors';
 import SensorValue from './SensorValue';
+import { DeviceModuleProps } from '@/lib/types/global';
 
-interface DHTModuleProps {
-  ip: string;
-  name?: string;
-}
-
-const DHTModule = ({ ip, name = 'DHT Sensor' }: DHTModuleProps) => {
+const DHTModule = ({ ip, name = 'DHT Sensor' }: DeviceModuleProps) => {
   const {
     data: { temperature, humidity, signalStrength },
     isFetching,
@@ -35,7 +31,7 @@ const DHTModule = ({ ip, name = 'DHT Sensor' }: DHTModuleProps) => {
       />
       <div className='flex w-full flex-wrap gap-x-2'>
         <Microchip />
-        <h3 className=''>{name}</h3>
+        <h3>{name}</h3>
       </div>
       <SensorValue
         icon={<Thermometer className='h-7 w-7 text-amber-400' />}

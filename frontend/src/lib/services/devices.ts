@@ -37,6 +37,5 @@ export const getDevices = async (): Promise<Device[]> => {
     throw new Error(`Request error! Error status: ${response.status}`);
   }
 
-  console.log(response.body);
   return response.json();
 };
