@@ -13,7 +13,7 @@ import ThemeSwitch from './ThemeSwitch';
 
 const Header = () => (
   <header className='text-foreground container m-auto flex justify-between p-4'>
-    <h1 className='text-3xl font-semibold'>Smart Home Dashboard</h1>
+    <h1 className='text-3xl font-semibold'>Dashboard</h1>
     <div className='flex items-center gap-2'>
       <ThemeSwitch />
       <DropdownMenu modal={false}>
