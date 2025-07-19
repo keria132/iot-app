@@ -1,5 +1,5 @@
 import { CloudSun } from 'lucide-react';
-import DeviceStatus from '../ui/device-status';
+import DeviceStatus from '../Devices/DeviceStatus';
 
 const WeatherWidget = () => (
   <div className='text-foreground bg-card text-muted-foreground relative flex min-w-[270px] flex-wrap justify-between gap-4 rounded-md p-4 shadow-md'>

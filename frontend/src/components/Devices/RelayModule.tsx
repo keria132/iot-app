@@ -1,14 +1,13 @@
 import { Split } from 'lucide-react';
-import DeviceStatus from '../ui/device-status';
 import { useQuery } from '@tanstack/react-query';
 import { getRelayStatus } from '@/lib/services/relays';
 import { DeviceModuleProps } from '@/lib/types/global';
 import { Switch } from '../ui/switch';
 import { Label } from '../ui/label';
 import useRelaySwitchMutation from '@/lib/hooks/useRelaySwitchMutation';
+import DeviceStatus from './DeviceStatus';
 
-const RelayModule = ({ ip, name = 'Relay' }: DeviceModuleProps) => {
-  //todo: remove hardcoded devices names too
+const RelayModule = ({ ip, name }: DeviceModuleProps) => {
   const {
     data: { relayStatus, signalStrength },
     isFetching,

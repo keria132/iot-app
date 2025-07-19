@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Slider } from '../ui/slider';
 import { Switch } from '../ui/switch';
 import { CONDITIONER_MAX_TEMP, CONDITIONER_MIN_TEMP } from './constants';
-import DeviceStatus from '../ui/device-status';
+import DeviceStatus from './DeviceStatus';
 
 const AirConditioner = () => {
   const [temperature, setTemperature] = useState(23); //temporary hardcode
