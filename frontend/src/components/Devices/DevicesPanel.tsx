@@ -2,10 +2,9 @@
 
 import { useQuery } from '@tanstack/react-query';
 import AddDevice from './AddDevice';
-import DHTModule from './DHTModule';
 import { getDevices } from '@/lib/services/devices';
 import { Loader } from 'lucide-react';
-import RelayModule from './RelayModule';
+import DeviceRenderer from './DeviceRenderer';
 
 const DevicesPanel = () => {
   const {
@@ -31,10 +30,15 @@ const DevicesPanel = () => {
           )
         )}
       </div>
-      {devices.map(device => (
-        <DHTModule key={device.ip} ip={device.ip} /> //todo: display different type of sensor for each device based on future type enum
+      {devices.map(({ name, ip, type, online }) => (
+        <DeviceRenderer
+          key={ip}
+          name={name}
+          ip={ip}
+          type={type}
+          online={online}
+        />
       ))}
-      <RelayModule ip='192.168.0.102' />
     </section>
   );
 };

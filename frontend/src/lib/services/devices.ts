@@ -1,16 +1,10 @@
 import { MAIN_HUB_IP, RESPONSE_STATUS } from '../constants';
+import { Device } from '../types/global';
 
 interface AddDevicePayload {
   name: string;
   ip: string;
   type: string;
-}
-
-interface Device {
-  ip: string;
-  name: string;
-  online: boolean;
-  type: string; //todo: enum type in future
 }
 
 export const addDevice = async (device: AddDevicePayload) => {

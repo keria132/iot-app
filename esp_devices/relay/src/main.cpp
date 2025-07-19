@@ -35,6 +35,10 @@ void setup() {
     request->send(200, "text/plain", "ok");
   });
 
+  server.on("/relayStatus", HTTP_OPTIONS, [](AsyncWebServerRequest *request){
+    request->send(200);
+  });
+
   server.on("/relayStatus", HTTP_GET, [](AsyncWebServerRequest *request) {
     Serial.println("Sending data response");
     int32_t rssi = WiFi.RSSI();

@@ -1,13 +1,13 @@
 'use client';
 
 import { Droplet, Microchip, Thermometer } from 'lucide-react';
-import DeviceStatus from '../ui/device-status';
 import { useQuery } from '@tanstack/react-query';
 import { getDHTSensorData } from '@/lib/services/sensors';
 import SensorValue from './SensorValue';
 import { DeviceModuleProps } from '@/lib/types/global';
+import DeviceStatus from './DeviceStatus';
 
-const DHTModule = ({ ip, name = 'DHT Sensor' }: DeviceModuleProps) => {
+const DHTModule = ({ ip, name }: DeviceModuleProps) => {
   const {
     data: { temperature, humidity, signalStrength },
     isFetching,

@@ -1,7 +1,7 @@
 export const CONDITIONER_MIN_TEMP = 10;
 export const CONDITIONER_MAX_TEMP = 30;
 
-export const newDeviceFields = [
+export const newDeviceInputFields = [
   {
     label: 'Device Name',
     id: 'deviceName',
@@ -13,11 +13,5 @@ export const newDeviceFields = [
     id: 'deviceIp',
     name: 'ip',
     defaultValue: '192.168.0.101',
-  },
-  {
-    label: 'Device type',
-    id: 'deviceType',
-    name: 'type',
-    defaultValue: 'Sensor',
   },
 ];
