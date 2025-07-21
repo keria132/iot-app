@@ -14,3 +14,8 @@ export enum DeviceType {
   DHTSensor = 'DHTSensor',
   Relay = 'Relay',
 }
+
+export interface SetRelayStatusPayload {
+  ip: string;
+  status: boolean;
+}

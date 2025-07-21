@@ -8,7 +8,6 @@ interface AddDevicePayload {
 }
 
 export const addDevice = async (device: AddDevicePayload) => {
-  console.log('Add new device', device);
   const response = await fetch(MAIN_HUB_IP + '/api/devices', {
     method: 'POST',
     headers: {

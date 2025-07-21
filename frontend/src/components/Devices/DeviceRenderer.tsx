@@ -10,7 +10,16 @@ const devicesComponents = {
 const DeviceRenderer = ({ name, ip, type }: Device) => {
   const Device = devicesComponents[type];
 
-  return Device ? <Device ip={ip} name={name} /> : <div>Unknown device</div>; //TODO: MAKE BETTER FALLBACK COMPONENT
+  return Device ? (
+    <Device ip={ip} name={name} />
+  ) : (
+    <div className='bg-card rounded-md p-4'>
+      <h3>Unknown device</h3>
+      <p>Name: {name}</p>
+      <p>IP: {ip}</p>
+      <p>Type: {type}</p>
+    </div>
+  );
 };
 
 export default DeviceRenderer;

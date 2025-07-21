@@ -1,12 +1,8 @@
+import { SetRelayStatusPayload } from '../types/global';
+
 interface GetRelayStatusPayload {
   relayStatus: boolean;
   signalStrength: number;
-}
-
-//TODO MAKE THIS INTERFACE GLOBAL OR DO SOME WORKAROUND
-export interface SetRelayStatusPayload {
-  ip: string;
-  status: boolean;
 }
 
 export const getRelayStatus = async (
