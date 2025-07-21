@@ -22,10 +22,8 @@ const RelayModule = ({ ip, name }: DeviceModuleProps) => {
 
   const relaySwitchMutation = useRelaySwitchMutation();
 
-  const handleRelaySwitch = (isChecked: boolean) => {
-    console.log(relayStatus, isChecked);
+  const handleRelaySwitch = (isChecked: boolean) =>
     relaySwitchMutation.mutate({ ip, status: isChecked });
-  };
 
   return (
     <div

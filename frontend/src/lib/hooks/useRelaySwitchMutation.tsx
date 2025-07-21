@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { setRelayStatus, SetRelayStatusPayload } from '../services/relays';
+import { setRelayStatus } from '../services/relays';
+import { SetRelayStatusPayload } from '../types/global';
 
 const useRelaySwitchMutation = () => {
   const queryClient = useQueryClient();

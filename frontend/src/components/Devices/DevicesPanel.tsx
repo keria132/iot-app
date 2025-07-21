@@ -20,16 +20,14 @@ const DevicesPanel = () => {
 
   return (
     <section className='flex flex-wrap gap-4'>
-      <AddDevice className='w-full' />
-      <div className='w-full'>
-        {isFetching || isLoading ? (
-          <Loader className='m-auto h-10 animate-spin' />
-        ) : (
-          error && (
-            <h3 className='text-destructive m-auto'>{`Failed to load devices: ${error?.message}`}</h3>
-          )
-        )}
-      </div>
+      <AddDevice className='mb-1' />
+      {isFetching || isLoading ? (
+        <Loader className='h-10 animate-spin' />
+      ) : (
+        error && (
+          <h3 className='text-destructive flex items-center'>{`Failed to load devices: ${error?.message}`}</h3>
+        )
+      )}
       {devices.map(({ name, ip, type, online }) => (
         <DeviceRenderer
           key={ip}
