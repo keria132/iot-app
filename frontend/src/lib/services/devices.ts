@@ -27,8 +27,20 @@ export const getDevices = async (): Promise<Device[]> => {
   const response = await fetch(MAIN_HUB_IP + '/api/devices');
 
   if (!response.ok) {
-    throw new Error(`Request error! Error status: ${response.status}`);
+    throw new Error(`Request error! Status: ${response.status}`);
   }
 
   return response.json();
+};
+
+export const deleteDevice = async (deviceIp: string) => {
+  const response = await fetch(MAIN_HUB_IP + `/api/devices?ip=${deviceIp}`, {
+    method: 'DELETE',
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      `Request error! Status: ${RESPONSE_STATUS[response.status] ?? response.status}`
+    );
+  }
 };

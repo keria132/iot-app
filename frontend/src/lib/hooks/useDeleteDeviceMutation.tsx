@@ -1,15 +1,15 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { addDevice } from '../services/devices';
+import { deleteDevice } from '../services/devices';
 import { toast } from 'sonner';
 
-const useAddDeviceMutation = () => {
+const useDeleteDeviceMutation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: addDevice,
+    mutationFn: deleteDevice,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['devices'] });
-      toast.success('Device successfully added!');
+      toast.success('Device successfully deleted!');
     },
     onError: error => {
       toast.error('Error: ' + error.message);
@@ -17,4 +17,4 @@ const useAddDeviceMutation = () => {
   });
 };
 
-export default useAddDeviceMutation;
+export default useDeleteDeviceMutation;

@@ -28,7 +28,7 @@ const DeviceStatus = ({ isFetching, error, rssi }: DeviceStatusProps) => {
   const statusColor = error || rssi < -90 ? 'bg-destructive' : 'bg-green-600';
 
   return (
-    <div className='absolute top-2 right-3 flex gap-x-1'>
+    <div className='flex gap-x-1'>
       <div className='relative'>
         <WifiIcon className='h-5 w-5' />
         <span
