@@ -36,7 +36,7 @@ const AddDevice = ({ className }: { className?: string }) => {
     const formData = new FormData(e.currentTarget);
     const { name, ip, type } = Object.fromEntries(formData.entries());
 
-    //TODO: GET RID OF TYPE CASTING
+    //TODO: GET RID OF TYPE CASTING AND ADD VALIDATION
     addDeviceMutation.mutate({
       name: name as string,
       ip: ip as string,
@@ -91,7 +91,9 @@ const AddDevice = ({ className }: { className?: string }) => {
               <DialogClose asChild>
                 <Button variant='outline'>Cancel</Button>
               </DialogClose>
-              <Button type='submit'>Add</Button>
+              <DialogClose asChild>
+                <Button type='submit'>Add</Button>
+              </DialogClose>
             </DialogFooter>
           </form>
         </DialogContent>

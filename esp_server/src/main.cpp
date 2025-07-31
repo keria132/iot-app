@@ -31,9 +31,12 @@ AsyncWebServer server(80);
 
 void connectWiFi();
 void listDir(const char *dirname);
+void saveDevicesToFS();
 void loadDevicesFromFS();
 void addDevice(String name, String ip, String type);
 void deleteFile(const char *path);
+bool deleteDeviceByIP(String ip);
+void deleteAllDevices();
 
 void setup() {
   Serial.begin(115200);
@@ -49,7 +52,6 @@ void setup() {
 
   listDir("/");
   loadDevicesFromFS();
-  // addDevice("New Sensor", "192.168.0.101", "dht");  // ADD HARDCODED DEVICE FOR TESTING
 
   DefaultHeaders::Instance().addHeader("Access-Control-Allow-Origin", "*");
   DefaultHeaders::Instance().addHeader("Access-Control-Allow-Methods", "DELETE, POST, GET, OPTIONS");
@@ -76,14 +78,6 @@ void setup() {
     String response;
     serializeJson(doc, response);
     request->send(200, "application/json", response);
-  });
-
-  server.on("/api/devices", HTTP_DELETE, [](AsyncWebServerRequest *request) {
-    deleteFile("/devices.json");
-    devices.clear();
-    Serial.println("All devices deleted");
-
-    request->send(200, "text/plain", "ok");
   });
 
   server.on("/api/devices", HTTP_POST, [](AsyncWebServerRequest *request) {}, NULL, [](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
@@ -122,6 +116,24 @@ void setup() {
       }
 
       body = "";
+    }
+  });
+
+  server.on("/api/devices", HTTP_DELETE, [](AsyncWebServerRequest *request) {
+    if (request->hasParam("ip")) {
+      String ip = request->getParam("ip")->value();
+      Serial.println("Deleting device with IP: " + ip);
+      
+      if (deleteDeviceByIP(ip)) {
+        request->send(200, "text/plain", "Device deleted");
+      } else {
+        request->send(404, "text/plain", "Device not found");
+      }
+    } else {
+      Serial.println("Deleting all devices");
+      deleteAllDevices();
+      
+      request->send(200, "text/plain", "All devices deleted");
     }
   });
 
@@ -284,4 +296,31 @@ void deleteFile(const char *path) {
   } else {
     Serial.println("Delete failed");
   }
+}
+
+bool deleteDeviceByIP(String ip) {
+  bool found = false;
+
+  for (size_t i = 0; i < devices.size(); ++i) {
+    if (devices[i].ip == ip) {
+      devices.erase(devices.begin() + i);
+      found = true;
+      break;
+    }
+  }
+
+  if (found) {
+    saveDevicesToFS();
+    Serial.println("Device deleted and filesystem updated");
+  } else {
+    Serial.println("Device not found");
+  }
+
+  return found;
+}
+
+void deleteAllDevices() {
+  devices.clear();
+  saveDevicesToFS();
+  Serial.println("All devices deleted from memory and filesystem");
 }
