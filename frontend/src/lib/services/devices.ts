@@ -1,4 +1,4 @@
-import { MAIN_HUB_IP, RESPONSE_STATUS } from '../constants';
+import { defaultHeaders, MAIN_HUB_IP, RESPONSE_STATUS } from '../constants';
 import { Device } from '../types/global';
 
 interface AddDevicePayload {
@@ -10,15 +10,13 @@ interface AddDevicePayload {
 export const addDevice = async (device: AddDevicePayload) => {
   const response = await fetch(MAIN_HUB_IP + '/api/devices', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: defaultHeaders,
     body: JSON.stringify(device),
   });
 
   if (!response.ok) {
     throw new Error(
-      `Request error! Status: ${RESPONSE_STATUS[response.status] ?? response.status}`
+      `Request error! Status: ${RESPONSE_STATUS[response.status] ?? response.status + response.statusText}`
     );
   }
 };

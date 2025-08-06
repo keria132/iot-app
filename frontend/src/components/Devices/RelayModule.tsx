@@ -5,11 +5,9 @@ import { DeviceModuleProps } from '@/lib/types/global';
 import { Switch } from '../ui/switch';
 import { Label } from '../ui/label';
 import useRelaySwitchMutation from '@/lib/hooks/useRelaySwitchMutation';
-import DeviceStatus from './DeviceStatus';
-import { Badge } from '../ui/badge';
-import DeviceMenu from './DeviceMenu';
+import DeviceCard from '../ui/custom/device-card';
 
-const RelayModule = ({ ip, name = 'Device' }: DeviceModuleProps) => {
+const RelayModule = ({ ip, name, roomName, roomId }: DeviceModuleProps) => {
   const {
     data: { relayStatus, signalStrength },
     isFetching,
@@ -28,24 +26,15 @@ const RelayModule = ({ ip, name = 'Device' }: DeviceModuleProps) => {
     relaySwitchMutation.mutate({ ip, status: isChecked });
 
   return (
-    <div
-      className={`text-foreground ${signalStrength < -90 && 'text-muted-foreground'} bg-card relative flex w-[160px] flex-wrap items-start justify-start rounded-md p-2 shadow-md`}
+    <DeviceCard
+      name={name}
+      ip={ip}
+      roomId={roomId}
+      roomName={roomName}
+      isFetching={isFetching}
+      error={error}
+      signalStrength={signalStrength}
     >
-      <div className='top-2 left-3 flex w-full justify-between'>
-        <div className='flex gap-x-1'>
-          <DeviceMenu name={name} ip={ip} />
-          <Badge
-            className={`${signalStrength < -90 && 'bg-muted-foreground'} text-xs`}
-          >
-            Unsorted
-          </Badge>
-        </div>
-        <DeviceStatus
-          isFetching={isFetching}
-          error={error}
-          rssi={signalStrength}
-        />
-      </div>
       <div className='flex flex-wrap gap-y-3 p-2 pt-3'>
         <div className='flex w-full flex-wrap items-center gap-x-1'>
           <Split />
@@ -57,11 +46,12 @@ const RelayModule = ({ ip, name = 'Device' }: DeviceModuleProps) => {
             checked={relayStatus}
             className='cursor-pointer'
             onCheckedChange={handleRelaySwitch}
+            disabled={signalStrength < -90}
           />
           <Label htmlFor='relay'>{relayStatus ? 'On' : 'Off'}</Label>
         </div>
       </div>
-    </div>
+    </DeviceCard>
   );
 };
 

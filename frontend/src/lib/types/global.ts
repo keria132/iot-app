@@ -1,6 +1,10 @@
+import { newDeviceTypeSelectItems } from '@/components/Devices/constants';
+
 export interface DeviceModuleProps {
   ip: string;
-  name?: string;
+  name: string;
+  roomId: string;
+  roomName: string;
 }
 
 export interface Device {
@@ -8,6 +12,7 @@ export interface Device {
   name: string;
   online: boolean;
   type: DeviceType;
+  roomId: string;
 }
 
 export enum DeviceType {
@@ -15,7 +20,14 @@ export enum DeviceType {
   Relay = 'Relay',
 }
 
+export interface Room {
+  name: string;
+  uuid: string;
+}
+
 export interface SetRelayStatusPayload {
   ip: string;
   status: boolean;
 }
+
+export type addDeviceItemsGroupType = typeof newDeviceTypeSelectItems;

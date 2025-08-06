@@ -3,10 +3,10 @@ export const navigationItems = [
     name: 'Dashboard',
   },
   {
-    name: 'Rooms',
+    name: 'Devices',
   },
   {
-    name: 'Devices',
+    name: 'Rooms',
   },
   {
     name: 'Automation',

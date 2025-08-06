@@ -3,6 +3,7 @@
 #include <ESP8266WiFi.h>
 #include <ESPAsyncTCP.h>
 #include <ESPAsyncWebServer.h>
+#include <AsyncJson.h>
 #include <ESP8266HTTPClient.h>
 #include <LittleFS.h>
 #include <vector>
@@ -19,24 +20,104 @@ struct Device {
   String name;
   String ip;
   String type;
+  String roomId;
   bool online;
 };
+
+struct Room {
+  String name;
+  String uuid;
+};
+
 std::vector<Device> devices;
+std::vector<Room> rooms;
 
 IPAddress local_IP(192, 168, 0, 100);
 IPAddress gateway(192, 168, 0, 1);
 IPAddress subnet(255, 255, 255, 0);
 
-AsyncWebServer server(80);
-
 void connectWiFi();
 void listDir(const char *dirname);
-void saveDevicesToFS();
-void loadDevicesFromFS();
-void addDevice(String name, String ip, String type);
+void saveToFS();
+void loadFromFS();
 void deleteFile(const char *path);
+void addDevice(String name, String ip, String type, String roomId);
 bool deleteDeviceByIP(String ip);
 void deleteAllDevices();
+bool addRoom(String name, String uuid);
+bool assignRoom(String deviceIp, String roomId);
+bool isRoomNameExists(const String &name);
+bool deleteRoomById(String id);
+
+AsyncWebServer server(80);
+
+AsyncCallbackJsonWebHandler* devicePostHandler = new AsyncCallbackJsonWebHandler("/api/devices",
+  [](AsyncWebServerRequest *request, JsonVariant &json) {
+    Serial.printf("[JSON HANDLER] %s %s\n", request->methodToString(), request->url().c_str());
+
+    String name = json["name"] | "";
+    String ip = json["ip"] | "";
+    String type = json["type"] | "";
+    String roomId = json["roomId"] | "";
+
+    if (name == "" || ip == "" || type == "") {
+      request->send(400, "text/plain", "Missing required fields");
+      return;
+    }
+
+    for (const auto& device : devices) {
+      if (device.ip == ip) {
+        request->send(409, "text/plain", "Device with this IP already exists");
+        return;
+      }
+    }
+
+    addDevice(name, ip, type, roomId);
+    request->send(200, "text/plain", "Device added");
+  }
+);
+
+AsyncCallbackJsonWebHandler* assignRoomPostHandler = new AsyncCallbackJsonWebHandler("/api/assign-room",
+  [](AsyncWebServerRequest *request, JsonVariant &json) {
+    Serial.printf("[JSON HANDLER] %s %s\n", request->methodToString(), request->url().c_str());
+
+    String deviceIp = json["deviceIp"] | "";
+    String roomId = json["roomId"] | "";
+
+    if (deviceIp == "" || roomId == "") {
+      request->send(400, "text/plain", "Missing ip or roomId");
+      return;
+    }
+
+    if (assignRoom(deviceIp, roomId)) {
+      request->send(200, "text/plain", "Room assigned to device");
+    } else {
+      request->send(404, "text/plain", "Device not found or room invalid");
+    }
+  }
+);
+
+AsyncCallbackJsonWebHandler* roomPostHandler = new AsyncCallbackJsonWebHandler("/api/rooms",
+  [](AsyncWebServerRequest *request, JsonVariant &json) {
+    Serial.printf("[JSON HANDLER] %s %s\n", request->methodToString(), request->url().c_str());
+
+    String name = json["name"] | "";
+    String uuid = json["uuid"] | "";
+
+    if (name == "" || uuid == "") {
+      request->send(400, "text/plain", "Missing name or room uuid");
+    } 
+
+    if (isRoomNameExists(name)) {
+      request->send(409, "text/plain", "Room name already in use");
+      return;
+    }
+    
+    if (addRoom(name, uuid)) {
+      request->send(200, "text/plain", "Room added");
+    }
+  }
+);
 
 void setup() {
   Serial.begin(115200);
@@ -46,12 +127,11 @@ void setup() {
   
   if (!LittleFS.begin()) {
       Serial.println("LittleFS Mount Failed");
-
       return;
   }
 
   listDir("/");
-  loadDevicesFromFS();
+  loadFromFS();
 
   DefaultHeaders::Instance().addHeader("Access-Control-Allow-Origin", "*");
   DefaultHeaders::Instance().addHeader("Access-Control-Allow-Methods", "DELETE, POST, GET, OPTIONS");
@@ -63,60 +143,21 @@ void setup() {
   });
 
   server.on("/api/devices", HTTP_GET, [](AsyncWebServerRequest *request) {
-    Serial.println("Sensor data requested");
     JsonDocument doc;
-    JsonArray arr = doc.to<JsonArray>();
+    JsonArray devicesArr = doc.to<JsonArray>();
 
     for (size_t i = 0; i < devices.size(); i++) {
-      JsonObject device = arr.add<JsonObject>();
-      device["name"] = devices[i].name;
-      device["ip"] = devices[i].ip;
-      device["type"] = devices[i].type;
-      device["online"] = devices[i].online;
+      JsonObject deviceObj = devicesArr.add<JsonObject>();
+      deviceObj["name"] = devices[i].name;
+      deviceObj["ip"] = devices[i].ip;
+      deviceObj["type"] = devices[i].type;
+      deviceObj["online"] = devices[i].online;
+      deviceObj["roomId"] = devices[i].roomId;
     }
 
     String response;
-    serializeJson(doc, response);
+    serializeJson(devicesArr, response);
     request->send(200, "application/json", response);
-  });
-
-  server.on("/api/devices", HTTP_POST, [](AsyncWebServerRequest *request) {}, NULL, [](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
-    Serial.println("Handling device POST request");
-
-    static String body = "";
-    body += String((char*)data).substring(0, len);
-
-    if (index + len == total) {
-      JsonDocument doc;
-      DeserializationError error = deserializeJson(doc, body);
-
-      if (error) {
-        request->send(400, "text/plain", "Invalid JSON");
-        body = "";
-        return;
-      }
-
-      String name = doc["name"] | "";
-      String ip = doc["ip"] | "";
-      String type = doc["type"] | "";
-
-      bool exists = false;
-      for (const auto& d : devices) {
-        if (d.ip == ip) {
-          exists = true;
-          break;
-        }
-      }
-
-      if (exists) {
-        request->send(409, "text/plain", "Device with this IP or name already exists");
-      } else {
-        addDevice(name, ip, type);
-        request->send(200, "text/plain", "Device added");
-      }
-
-      body = "";
-    }
   });
 
   server.on("/api/devices", HTTP_DELETE, [](AsyncWebServerRequest *request) {
@@ -137,20 +178,62 @@ void setup() {
     }
   });
 
-  server.onNotFound([](AsyncWebServerRequest *request) {
-  if (request->method() == HTTP_OPTIONS) {
+  server.on("/api/rooms", HTTP_GET, [](AsyncWebServerRequest *request) {
+    JsonDocument doc;
+    JsonArray roomsArr = doc.to<JsonArray>();
 
-    Serial.println("Preflight cors");
-    AsyncWebServerResponse *response = request->beginResponse(200);
-    // TODO: ADD SECURITY FEATURES LATER
-    // response->addHeader("Access-Control-Allow-Origin", "*");
-    // response->addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-    // response->addHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-    request->send(response);
-  } else {
-    request->send(404, "text/plain", "Not found");
-  }
-});
+    for (const auto& room : rooms) {
+      JsonObject roomObj = roomsArr.add<JsonObject>();
+      roomObj["name"] = room.name;
+      roomObj["uuid"] = room.uuid;
+    }
+
+    String response;
+    serializeJson(roomsArr, response);
+    request->send(200, "application/json", response);
+  });
+
+  server.on("/api/rooms", HTTP_DELETE, [](AsyncWebServerRequest *request) {
+    if (request->hasParam("id")) {
+      String id = request->getParam("id")->value();
+      Serial.println("Deleting room with ID: " + id);
+      
+      if (deleteRoomById(id)) {
+        request->send(200, "text/plain", "Room deleted");
+      } else {
+        request->send(404, "text/plain", "Room not found");
+      }
+    } else {
+      Serial.println("Deleting all rooms");
+      // deleteAllRooms() TODO: delete all rooms here
+      
+      request->send(200, "text/plain", "All devices deleted");
+    }
+  });
+
+  server.on("/api/wipe", HTTP_DELETE, [](AsyncWebServerRequest *request) {
+    if (LittleFS.remove("/data.json")) request->send(200, "text/plain", "Wipe successful");;
+  });
+
+  //POST AsyncJson handlers
+  server.addHandler(devicePostHandler);
+  server.addHandler(assignRoomPostHandler);
+  server.addHandler(roomPostHandler);
+
+  server.onNotFound([](AsyncWebServerRequest *request) {
+    if (request->method() == HTTP_OPTIONS) {
+
+      Serial.println("Preflight cors");
+      AsyncWebServerResponse *response = request->beginResponse(200);
+      // TODO: ADD SECURITY FEATURES LATER
+      // response->addHeader("Access-Control-Allow-Origin", "*");
+      // response->addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+      // response->addHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+      request->send(response);
+    } else {
+      request->send(404, "text/plain", "Not found");
+    }
+  });
 
   server.begin();
 }
@@ -170,13 +253,13 @@ void loop() {
       HTTPClient http;
       String url = "http://" + devices[i].ip;
       Serial.print("Device url:");
-      Serial.println(url);
+      Serial.print(url);
 
       if (http.begin(client, url)) {
         int httpCode = http.GET();
         devices[i].online = httpCode == 200;
         http.end();
-        Serial.println(httpCode);
+        Serial.println(" " + String(httpCode));
       } else {
         devices[i].online = false;
         Serial.println("Failed to ping the device");
@@ -186,7 +269,6 @@ void loop() {
 }
 
 //FUNCTIONS
-
 void connectWiFi() {
   if (!WiFi.config(local_IP, gateway, subnet)) {
     Serial.println("STA Failed to configure");
@@ -228,65 +310,92 @@ void listDir(const char *dirname) {
   }
 }
 
-void saveDevicesToFS() {
-  File file = LittleFS.open("/devices.json", "w");
+void saveToFS() {
+  File file = LittleFS.open("/data.json", "w");
   if (!file) {
-    Serial.println("Failed to open /devices.json for writing");
+    Serial.println("Failed to open /data.json for writing");
     return;
   }
 
   JsonDocument doc;
-  JsonArray arr = doc.to<JsonArray>();
+  JsonObject root = doc.to<JsonObject>();
 
+  JsonArray devicesArr = root["devices"].to<JsonArray>();
   for (const auto& device : devices) {
-    JsonObject obj = arr.add<JsonObject>();
-    obj["name"] = device.name;
-    obj["ip"] = device.ip;
-    obj["type"] = device.type;
-    obj["online"] = device.online;
+    Serial.println("Saving new device...");
+    JsonObject newDevice = devicesArr.add<JsonObject>();
+    newDevice["name"] = device.name;
+    newDevice["ip"] = device.ip;
+    newDevice["type"] = device.type;
+    newDevice["online"] = device.online;
+    newDevice["roomId"] = device.roomId;
   }
 
-  if (serializeJson(doc, file) == 0) {
-    Serial.println("Failed to write devices to JSON");
+  JsonArray roomsArr = root["rooms"].to<JsonArray>();
+  for (const auto& room : rooms) {
+    JsonObject newRoom = roomsArr.add<JsonObject>();
+    newRoom["name"] = room.name;
+    newRoom["uuid"] = room.uuid;
+  }
+
+  if (serializeJson(root, file) == 0) {
+    Serial.println("Failed to write combined data to JSON");
   } else {
-    Serial.println("Saved devices to FS");
+    Serial.println("Saved combined data to FS");
   }
 
   file.close();
 }
 
-void loadDevicesFromFS() {
-  File file = LittleFS.open("/devices.json", "r");
+void loadFromFS() {
+  File file = LittleFS.open("/data.json", "r");
   if (!file) {
-    Serial.println("Failed to open /devices.json");
+    Serial.println("No existing data file");
     return;
   }
 
   JsonDocument doc;
   DeserializationError error = deserializeJson(doc, file);
   if (error) {
-    Serial.println("Failed to parse devices.json");
+    Serial.println("Failed to parse data.json");
+    file.close();
     return;
   }
 
-  devices.clear();  // Clear existing list
+   if (doc.overflowed()) {
+    Serial.println("Warning: JsonDocument overflowed while parsing (unexpected for v7)");
+  }
 
-  for (JsonObject obj : doc.as<JsonArray>()) {
-    Device d;
-    d.name = obj["name"].as<String>();
-    d.ip = obj["ip"].as<String>();
-    d.type = obj["type"].as<String>();
-    d.online = false; // will be updated during ping
-    devices.push_back(d);
+  devices.clear();
+  if (doc["devices"].is<JsonArray>()) {
+    for (JsonObject device : doc["devices"].as<JsonArray>()) {
+      Device newDevice;
+      newDevice.name = device["name"].as<String>();
+      newDevice.ip = device["ip"].as<String>();
+      newDevice.type = device["type"].as<String>();
+      newDevice.online = false;
+      newDevice.roomId = device["roomId"] | String("");
+      devices.push_back(newDevice);
+    }
+  }
+
+  rooms.clear();
+  if (doc["rooms"].is<JsonArray>()) {
+    for (JsonObject room : doc["rooms"].as<JsonArray>()) {
+      Room newRoom;
+      newRoom.name = room["name"].as<String>();
+      newRoom.uuid = room["uuid"].as<String>();
+      rooms.push_back(newRoom);
+    }
   }
 
   file.close();
 }
 
-void addDevice(String name, String ip, String type) {
-  Device newDevice = { name, ip, type, false };
+void addDevice(String name, String ip, String type, String roomId) {
+  Device newDevice = { name, ip, type, roomId, false };
   devices.push_back(newDevice);
-  saveDevicesToFS();  // Persist it
+  saveToFS();
 }
 
 void deleteFile(const char *path) {
@@ -310,7 +419,7 @@ bool deleteDeviceByIP(String ip) {
   }
 
   if (found) {
-    saveDevicesToFS();
+    saveToFS();
     Serial.println("Device deleted and filesystem updated");
   } else {
     Serial.println("Device not found");
@@ -321,6 +430,83 @@ bool deleteDeviceByIP(String ip) {
 
 void deleteAllDevices() {
   devices.clear();
-  saveDevicesToFS();
+  saveToFS();
   Serial.println("All devices deleted from memory and filesystem");
+}
+
+bool addRoom(String name, String uuid) {
+  for (const auto& room : rooms) {
+    if (room.uuid == uuid){
+      Serial.println("Error - duplicate uuid detected, return");
+      return false;
+    };
+  };
+
+  Room newRoom = { name, uuid };
+  rooms.push_back(newRoom);
+  saveToFS();
+  
+  return true;
+}
+
+bool assignRoom(String deviceIp, String roomId) {
+  bool roomExists = false;
+  for (const auto& r : rooms) {
+    if (r.uuid == roomId) {
+      roomExists = true;
+      break;
+    }
+  }
+
+  if (!roomExists) {
+    Serial.println("Attempted to assign non-existent room UUID");
+    return false;
+  }
+
+  for (auto& device : devices) {
+    if (device.ip == deviceIp) {
+      device.roomId = roomId;
+      saveToFS();
+      return true;
+    }
+  }
+  
+  return false;
+}
+
+bool isRoomNameExists(const String &name) {
+  String target = name;
+  target.trim();
+  target.toLowerCase();
+
+  for (const auto &room : rooms) {
+    String existing = room.name;
+    existing.trim();
+    existing.toLowerCase();
+
+    if (existing == target) return true;
+  }
+
+  return false;
+}
+
+bool deleteRoomById(String id) {
+  bool found = false;
+
+  for (size_t i = 0; i < rooms.size(); ++i) {
+    if (rooms[i].uuid == id) {
+      rooms.erase(rooms.begin() + i);
+      found = true;
+      break;
+    }
+  }
+
+  if (found) {
+    saveToFS();
+    Serial.println("Room deleted and filesystem updated");
+  } else {
+    Serial.println("Room not found");
+  }
+
+  return found;
 }

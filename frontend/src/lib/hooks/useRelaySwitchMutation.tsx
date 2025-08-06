@@ -30,6 +30,10 @@ const useRelaySwitchMutation = () => {
 
       toast.error('Error: ' + error.message);
     },
+
+    //TODO: refetch after mutation is done
+    // onSettled: newState =>
+    //   queryClient.invalidateQueries({ queryKey: ['Relay', newState?.ip] }),
   });
 };
 

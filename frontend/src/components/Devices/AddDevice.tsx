@@ -14,18 +14,13 @@ import {
 } from '../ui/dialog';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
-import { newDeviceInputFields } from './constants';
-import useAddDeviceMutation from '@/lib/hooks/useAddDeviceMutation';
 import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '../ui/select';
-import { DeviceType } from '@/lib/types/global';
+  mockNewDeviceTypeSelectItems,
+  newDeviceInputFields,
+  newDeviceTypeSelectItems,
+} from './constants';
+import useAddDeviceMutation from '@/lib/hooks/useAddDeviceMutation';
+import AddDeviceSelect from './AddDeviceSelect';
 
 const AddDevice = ({ className }: { className?: string }) => {
   const addDeviceMutation = useAddDeviceMutation();
@@ -63,29 +58,21 @@ const AddDevice = ({ className }: { className?: string }) => {
                   <Input id={id} name={name} defaultValue={defaultValue} />
                 </div>
               ))}
-              <Label htmlFor='deviceType'>Device type</Label>
-              <Select name='type'>
-                <SelectTrigger id='deviceType' className='cursor-pointer'>
-                  <SelectValue placeholder='Select device type' />
-                </SelectTrigger>
-                <SelectContent position='popper' modal={false}>
-                  <SelectGroup>
-                    <SelectLabel>Device types</SelectLabel>
-                    <SelectItem
-                      className='cursor-pointer'
-                      value={DeviceType.DHTSensor}
-                    >
-                      DHT Sensor
-                    </SelectItem>
-                    <SelectItem
-                      className='cursor-pointer'
-                      value={DeviceType.Relay}
-                    >
-                      Relay
-                    </SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
+              <AddDeviceSelect
+                label='Device type'
+                name='type'
+                id='deviceType'
+                placeholder='Select device type'
+                itemsGroup={newDeviceTypeSelectItems}
+              />
+              {/* TODO: list rooms to assign and handle the assign request */}
+              <AddDeviceSelect
+                label='Assign to room'
+                name='room'
+                id='roomName'
+                placeholder='Select available room'
+                itemsGroup={mockNewDeviceTypeSelectItems}
+              />
             </div>
             <DialogFooter>
               <DialogClose asChild>
