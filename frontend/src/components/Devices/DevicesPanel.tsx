@@ -2,11 +2,13 @@
 
 import { useQuery } from '@tanstack/react-query';
 import AddDevice from './AddDevice';
-import { getDevices } from '@/lib/services/devices';
-import { Loader } from 'lucide-react';
 import DeviceRenderer from './DeviceRenderer';
 import { useMemo } from 'react';
 import { Device, DeviceType } from '@/lib/types/global';
+import { devicesQueryOptions } from '@/lib/constants';
+import CustomHeading from '../ui/custom/custom-heading';
+import { v4 as uuid } from 'uuid';
+import CustomLoader from '../ui/custom/custom-loader';
 
 const deviceTypeName: Record<string, string> = {
   [DeviceType.DHTSensor]: 'Sensors',
@@ -15,16 +17,13 @@ const deviceTypeName: Record<string, string> = {
 
 const DevicesPanel = () => {
   const {
-    data: devices,
+    data: devices = [],
     isFetching,
     isLoading,
     error,
-  } = useQuery({
-    queryKey: ['devices'],
-    queryFn: async () => getDevices(),
-    initialData: [],
-  });
+  } = useQuery(devicesQueryOptions());
 
+  //TODO: consider reduce function?
   const devicesByType = useMemo(() => {
     const deviceTypes: Record<DeviceType, Device[]> = {
       [DeviceType.Relay]: [],
@@ -39,26 +38,25 @@ const DevicesPanel = () => {
   return (
     <section className='flex flex-wrap gap-4'>
       <AddDevice className='mb-1' />
-      {isFetching || isLoading ? (
-        <Loader className='h-10 animate-spin' />
-      ) : (
-        error && (
-          <h3 className='text-destructive flex items-center'>{`Failed to load devices: ${error?.message}`}</h3>
-        )
-      )}
+      <CustomLoader
+        isFetching={isFetching}
+        isLoading={isLoading}
+        error={error}
+      />
       <div className='flex w-full flex-wrap gap-4'>
-        {Object.entries(devicesByType).map(([deviceType, devices], index) => (
-          <div className='flex w-full flex-wrap gap-2' key={index}>
-            {devices.length !== 0 && (
-              <h2 className='w-full text-lg'>{deviceTypeName[deviceType]}:</h2>
+        {Object.entries(devicesByType).map(([deviceType, devicesGroup]) => (
+          <div className='flex w-full flex-wrap gap-2' key={uuid()}>
+            {devicesGroup.length !== 0 && (
+              <CustomHeading>{deviceTypeName[deviceType]}</CustomHeading>
             )}
-            {devices.map(({ name, ip, type, online }) => (
+            {devicesGroup.map(({ name, ip, type, online, roomId }) => (
               <DeviceRenderer
                 key={ip}
                 name={name}
                 ip={ip}
                 type={type}
                 online={online}
+                roomId={roomId}
               />
             ))}
           </div>

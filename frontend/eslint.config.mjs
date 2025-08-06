@@ -21,6 +21,7 @@ const eslintConfig = [
       'plugin:react-hooks/recommended',
       'plugin:jsx-a11y/recommended',
       'plugin:prettier/recommended',
+      'plugin:@tanstack/query/recommended',
     ],
     parser: '@typescript-eslint/parser',
     plugins: [
@@ -30,6 +31,7 @@ const eslintConfig = [
       'jsx-a11y',
       'import',
       'prettier',
+      '@tanstack/query',
     ],
     rules: {
       '@typescript-eslint/no-unused-vars': 'error',
