@@ -12,11 +12,16 @@ import {
 } from '../ui/dialog';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
-import useAddRoomMutation from '@/lib/hooks/useAddRoomMutation';
 import { v4 as uuid } from 'uuid';
+import useCustomMutation from '@/lib/hooks/useCustomMutation';
+import { addRoom } from '@/lib/services/rooms';
 
 const AddRoom = ({ className }: { className: string }) => {
-  const addRoomMutation = useAddRoomMutation();
+  const addRoomMutation = useCustomMutation({
+    mutationFn: addRoom,
+    queryKey: ['rooms'],
+    successMessage: 'Room successfully added!',
+  });
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();

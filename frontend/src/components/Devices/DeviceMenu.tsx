@@ -13,10 +13,11 @@ import {
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 import { DeviceModuleProps } from '@/lib/types/global';
-import useDeleteDeviceMutation from '@/lib/hooks/useDeleteDeviceMutation';
 import { useQuery } from '@tanstack/react-query';
 import { roomsQueryOptions } from '@/lib/constants';
 import useAssignRoomMutation from '@/lib/hooks/useAssignRoomMutation';
+import useCustomMutation from '@/lib/hooks/useCustomMutation';
+import { deleteDevice } from '@/lib/services/devices';
 
 const DeviceMenu = ({
   name,
@@ -24,7 +25,11 @@ const DeviceMenu = ({
   roomId,
 }: Omit<DeviceModuleProps, 'roomName'>) => {
   const { data: rooms = [] } = useQuery(roomsQueryOptions());
-  const deleteDeviceMutation = useDeleteDeviceMutation();
+  const deleteDeviceMutation = useCustomMutation({
+    mutationFn: deleteDevice,
+    queryKey: ['devices'],
+    successMessage: 'Device successfully deleted!',
+  });
   const assignRoomMutation = useAssignRoomMutation();
 
   const handleDeleteDevice = () => deleteDeviceMutation.mutate(ip);

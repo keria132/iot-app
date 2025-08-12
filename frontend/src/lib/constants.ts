@@ -13,22 +13,22 @@ export const defaultHeaders = {
   'Content-Type': 'application/json',
 };
 
-// const maxStaleTime = 240000; // 4 minutes
+const maxStaleTime = 240000; // 4 minutes
 
-const defaultQueryOptions = {
-  staleTime: 5000,
-  refetchInterval: 7000,
+const maxStaleQueryOptions = {
+  staleTime: maxStaleTime,
 };
 
-// const maxStaleQueryOptions = {
-//   staleTime: maxStaleTime,
+// const defaultQueryOptions = {
+//   staleTime: 5000,
+//   refetchInterval: 7000,
 // };
 
 export const devicesQueryOptions = () => {
   return queryOptions({
     queryKey: ['devices'],
     queryFn: async () => getDevices(),
-    ...defaultQueryOptions,
+    ...maxStaleQueryOptions,
   });
 };
 
@@ -36,6 +36,6 @@ export const roomsQueryOptions = () => {
   return queryOptions({
     queryKey: ['rooms'],
     queryFn: async () => getRooms(),
-    ...defaultQueryOptions,
+    ...maxStaleQueryOptions,
   });
 };
