@@ -19,11 +19,16 @@ import {
   newDeviceInputFields,
   newDeviceTypeSelectItems,
 } from './constants';
-import useAddDeviceMutation from '@/lib/hooks/useAddDeviceMutation';
 import AddDeviceSelect from './AddDeviceSelect';
+import useCustomMutation from '@/lib/hooks/useCustomMutation';
+import { addDevice } from '@/lib/services/devices';
 
 const AddDevice = ({ className }: { className?: string }) => {
-  const addDeviceMutation = useAddDeviceMutation();
+  const addDeviceMutation = useCustomMutation({
+    mutationFn: addDevice,
+    queryKey: ['devices'],
+    successMessage: 'Device successfully added!',
+  });
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
