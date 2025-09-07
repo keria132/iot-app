@@ -5,6 +5,7 @@ interface AddDevicePayload {
   name: string;
   ip: string;
   type: string;
+  room?: string;
 }
 
 export const addDevice = async (device: AddDevicePayload) => {
