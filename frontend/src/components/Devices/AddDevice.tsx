@@ -22,6 +22,9 @@ import {
 import AddDeviceSelect from './AddDeviceSelect';
 import useCustomMutation from '@/lib/hooks/useCustomMutation';
 import { addDevice } from '@/lib/services/devices';
+import { AddDeviceSchema } from '@/lib/schemas';
+import { toast } from 'sonner';
+import { validateFormData } from '@/lib/helpers/validateFormData';
 
 const AddDevice = ({ className }: { className?: string }) => {
   const addDeviceMutation = useCustomMutation({
@@ -34,14 +37,14 @@ const AddDevice = ({ className }: { className?: string }) => {
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget);
-    const { name, ip, type } = Object.fromEntries(formData.entries());
+    const parsed = validateFormData(formData, AddDeviceSchema);
+    if (!parsed.status) {
+      toast.error(parsed.error);
 
-    //TODO: GET RID OF TYPE CASTING AND ADD VALIDATION
-    addDeviceMutation.mutate({
-      name: name as string,
-      ip: ip as string,
-      type: type as string,
-    });
+      return;
+    }
+
+    addDeviceMutation.mutate(parsed.data);
   };
 
   return (
