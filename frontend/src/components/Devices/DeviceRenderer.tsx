@@ -19,11 +19,13 @@ const DeviceRenderer = ({ name, ip, type, roomId }: Device) => {
     isLoading,
   } = useQuery(roomsQueryOptions());
 
-  const roomName = useMemo(() => {
-    return isFetching || isLoading
-      ? 'Loading...'
-      : rooms.find(room => room.uuid === roomId)?.name || 'Unsorted';
-  }, [rooms, roomId, isFetching, isLoading]);
+  const roomName = useMemo(
+    () =>
+      isFetching || isLoading
+        ? 'Loading...'
+        : rooms.find(room => room.uuid === roomId)?.name || 'Unsorted',
+    [rooms, roomId, isFetching, isLoading]
+  );
 
   return Device ? (
     <Device ip={ip} name={name} roomId={roomId} roomName={roomName} />

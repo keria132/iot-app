@@ -2,7 +2,7 @@ import { queryOptions } from '@tanstack/react-query';
 import { getDevices } from './services/devices';
 import { getRooms } from './services/rooms';
 
-export const MAIN_HUB_IP = 'http://192.168.0.100';
+export const MAIN_HUB_IP = 'http://192.168.9.231';
 
 export const RESPONSE_STATUS: { [key: number]: string } = {
   409: 'The resource already exists!',
@@ -24,18 +24,16 @@ const maxStaleQueryOptions = {
 //   refetchInterval: 7000,
 // };
 
-export const devicesQueryOptions = () => {
-  return queryOptions({
+export const devicesQueryOptions = () =>
+  queryOptions({
     queryKey: ['devices'],
     queryFn: async () => getDevices(),
     ...maxStaleQueryOptions,
   });
-};
 
-export const roomsQueryOptions = () => {
-  return queryOptions({
+export const roomsQueryOptions = () =>
+  queryOptions({
     queryKey: ['rooms'],
     queryFn: async () => getRooms(),
     ...maxStaleQueryOptions,
   });
-};

@@ -1,4 +1,4 @@
-import { newDeviceTypeSelectItems } from '@/components/Devices/constants';
+import { deviceTypeSelectOptions } from '@/components/Devices/constants';
 
 export interface DeviceModuleProps {
   ip: string;
@@ -38,4 +38,4 @@ export interface SetRelayStatusPayload {
 //   DHTSensor = 'DHTSensor',
 // }
 
-export type addDeviceItemsGroupType = typeof newDeviceTypeSelectItems;
+export type addDeviceSelectOptionsType = typeof deviceTypeSelectOptions;

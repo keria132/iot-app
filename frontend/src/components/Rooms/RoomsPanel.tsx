@@ -47,7 +47,8 @@ const RoomsPanel = () => {
         isLoading={isLoading}
         error={error}
       />
-      <div className='flex w-full flex-wrap gap-4'>
+      <div className='flex w-full flex-wrap'>
+        {/* TODO: consider empty rooms to still show up */}
         {Object.entries(devicesByRoom).map(([roomName, roomDevices]) => (
           <div className='flex w-full flex-wrap gap-2' key={uuid()}>
             <CustomHeading>{roomName}</CustomHeading>
