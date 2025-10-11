@@ -1,6 +1,6 @@
 'use client';
 
-import { FormEvent } from 'react';
+import { FormEvent, useMemo } from 'react';
 import { Button } from '../ui/button';
 import {
   Dialog,
@@ -14,24 +14,35 @@ import {
 } from '../ui/dialog';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
-import {
-  mockNewDeviceTypeSelectItems,
-  newDeviceInputFields,
-  newDeviceTypeSelectItems,
-} from './constants';
+import { deviceInputFields, deviceTypeSelectOptions } from './constants';
 import AddDeviceSelect from './AddDeviceSelect';
 import useCustomMutation from '@/lib/hooks/useCustomMutation';
 import { addDevice } from '@/lib/services/devices';
 import { AddDeviceSchema } from '@/lib/schemas';
 import { toast } from 'sonner';
 import { validateFormData } from '@/lib/helpers/validateFormData';
+import { useQuery } from '@tanstack/react-query';
+import { roomsQueryOptions } from '@/lib/constants';
 
 const AddDevice = ({ className }: { className?: string }) => {
   const addDeviceMutation = useCustomMutation({
     mutationFn: addDevice,
     queryKey: ['devices'],
     successMessage: 'Device successfully added!',
+    toasterId: 'addDevice',
   });
+  const { data: rooms = [] } = useQuery(roomsQueryOptions());
+
+  const deviceRoomSelectItems = useMemo(
+    () => ({
+      label: 'Available rooms',
+      options: rooms.map(({ name, uuid }) => ({
+        itemName: name,
+        itemValue: uuid,
+      })),
+    }),
+    [rooms]
+  );
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -60,7 +71,7 @@ const AddDevice = ({ className }: { className?: string }) => {
               <DialogDescription>Add new device to the hub</DialogDescription>
             </DialogHeader>
             <div className='flex flex-col gap-4'>
-              {newDeviceInputFields.map(({ label, id, name, defaultValue }) => (
+              {deviceInputFields.map(({ label, id, name, defaultValue }) => (
                 <div className='flex flex-col gap-2' key={id}>
                   <Label htmlFor={id}>{label}</Label>
                   <Input id={id} name={name} defaultValue={defaultValue} />
@@ -71,15 +82,14 @@ const AddDevice = ({ className }: { className?: string }) => {
                 name='type'
                 id='deviceType'
                 placeholder='Select device type'
-                itemsGroup={newDeviceTypeSelectItems}
+                selectOptions={deviceTypeSelectOptions}
               />
-              {/* TODO: list rooms to assign and handle the assign request */}
               <AddDeviceSelect
                 label='Assign to room'
                 name='room'
                 id='roomName'
                 placeholder='Select available room'
-                itemsGroup={mockNewDeviceTypeSelectItems}
+                selectOptions={deviceRoomSelectItems}
               />
             </div>
             <DialogFooter>

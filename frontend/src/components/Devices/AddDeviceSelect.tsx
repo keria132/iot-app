@@ -1,4 +1,4 @@
-import { addDeviceItemsGroupType } from '@/lib/types/global';
+import { addDeviceSelectOptionsType } from '@/lib/types/global';
 import { Label } from '../ui/label';
 import {
   Select,
@@ -15,7 +15,7 @@ interface AddDevice {
   name: string;
   id: string;
   placeholder: string;
-  itemsGroup: addDeviceItemsGroupType;
+  selectOptions: addDeviceSelectOptionsType;
 }
 
 //TODO: FIX Select problem inside Dialog component
@@ -24,7 +24,7 @@ const AddDeviceSelect = ({
   name,
   id,
   placeholder,
-  itemsGroup,
+  selectOptions,
 }: AddDevice) => (
   <div className='flex flex-col gap-2'>
     <Label htmlFor={id}>{label}</Label>
@@ -34,8 +34,12 @@ const AddDeviceSelect = ({
       </SelectTrigger>
       <SelectContent position='popper' modal={false}>
         <SelectGroup>
-          <SelectLabel>{itemsGroup.label}</SelectLabel>
-          {itemsGroup.items.map(({ itemName, itemValue }) => (
+          <SelectLabel>
+            {Object.keys(selectOptions.options).length
+              ? selectOptions.label
+              : 'No rooms available'}
+          </SelectLabel>
+          {selectOptions.options.map(({ itemName, itemValue }) => (
             <SelectItem
               className='cursor-pointer'
               value={itemValue}

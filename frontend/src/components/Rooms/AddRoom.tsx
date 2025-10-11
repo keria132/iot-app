@@ -24,6 +24,7 @@ const AddRoom = ({ className }: { className: string }) => {
     mutationFn: addRoom,
     queryKey: ['rooms'],
     successMessage: 'Room successfully added!',
+    toasterId: 'addRoom',
   });
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {

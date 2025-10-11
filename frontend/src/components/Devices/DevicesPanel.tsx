@@ -44,6 +44,7 @@ const DevicesPanel = () => {
         error={error}
       />
       <div className='flex w-full flex-wrap gap-4'>
+        {/* TODO: map through devices instead of device types */}
         {Object.entries(devicesByType).map(([deviceType, devicesGroup]) => (
           <div className='flex w-full flex-wrap gap-2' key={uuid()}>
             {devicesGroup.length !== 0 && (

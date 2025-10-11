@@ -29,6 +29,7 @@ const DeviceMenu = ({
     mutationFn: deleteDevice,
     queryKey: ['devices'],
     successMessage: 'Device successfully deleted!',
+    toasterId: 'deleteDevice',
   });
   const assignRoomMutation = useAssignRoomMutation();
 

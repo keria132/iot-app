@@ -5,23 +5,28 @@ interface UseCustomMutationProps<MutationPayload> {
   mutationFn: (payload: MutationPayload) => Promise<void>;
   queryKey: string[]; //TODO: consider typed keys - QueryKeys[]
   successMessage: string;
+  toasterId: string;
 }
 
 const useCustomMutation = <MutationPayload,>({
   mutationFn,
   queryKey,
   successMessage,
+  toasterId,
 }: UseCustomMutationProps<MutationPayload>) => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn,
+    onMutate: () => {
+      toast.loading('Adding device...', { id: toasterId });
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKey });
-      toast.success(successMessage);
+      toast.success(successMessage, { id: toasterId });
     },
     onError: error => {
-      toast.error('Error: ' + error.message);
+      toast.error('Error: ' + error.message, { id: toasterId });
     },
   });
 };
