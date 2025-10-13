@@ -2,7 +2,7 @@ import { queryOptions } from '@tanstack/react-query';
 import { getDevices } from './services/devices';
 import { getRooms } from './services/rooms';
 
-export const MAIN_HUB_IP = 'http://192.168.9.231';
+export const MAIN_HUB_IP = 'ESP_SERVER_IP';
 
 export const RESPONSE_STATUS: { [key: number]: string } = {
   409: 'The resource already exists!',
@@ -13,10 +13,10 @@ export const defaultHeaders = {
   'Content-Type': 'application/json',
 };
 
-const maxStaleTime = 240000; // 4 minutes
+const MAX_STALE_TIME = 240000; // 4 minutes
 
 const maxStaleQueryOptions = {
-  staleTime: maxStaleTime,
+  staleTime: MAX_STALE_TIME,
 };
 
 // const defaultQueryOptions = {

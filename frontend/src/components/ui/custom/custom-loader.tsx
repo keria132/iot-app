@@ -7,7 +7,7 @@ interface CustomLoaderProps {
 }
 
 const CustomLoader = ({ isLoading, isFetching, error }: CustomLoaderProps) => (
-  <div>
+  <div className='flex items-center'>
     {isFetching || isLoading ? (
       <Loader className='h-10 animate-spin' />
     ) : (

@@ -19,7 +19,7 @@ import { AddRoomSchema } from '@/lib/schemas';
 import { toast } from 'sonner';
 import { validateFormData } from '@/lib/helpers/validateFormData';
 
-const AddRoom = ({ className }: { className: string }) => {
+const AddRoom = ({ className }: { className?: string }) => {
   const addRoomMutation = useCustomMutation({
     mutationFn: addRoom,
     queryKey: ['rooms'],
