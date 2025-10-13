@@ -19,49 +19,57 @@ const RoomsPanel = () => {
   } = useQuery(devicesQueryOptions());
   const { data: rooms = [] } = useQuery(roomsQueryOptions());
 
-  const devicesByRoom = useMemo(() => {
-    const roomMap = new Map(rooms.map(({ uuid, name }) => [uuid, name]));
-    const deviceRooms: Record<string, Device[]> = {};
+  const roomsByDevices = useMemo(() => {
+    const roomsDevices = rooms.reduce<Record<string, Device[]>>(
+      (accumulator, { name }) => {
+        accumulator[name] = [];
+
+        return accumulator;
+      },
+      {}
+    );
 
     devices.forEach(device => {
-      const deviceRoom =
-        device.roomId && roomMap.has(device.roomId)
-          ? roomMap.get(device.roomId)!
-          : 'Unsorted';
+      const assignedRoomName =
+        rooms.find(({ uuid }) => uuid === device.roomId)?.name ?? 'Unsorted';
 
-      if (!deviceRooms[deviceRoom]) {
-        deviceRooms[deviceRoom] = [];
+      if (roomsDevices[assignedRoomName]) {
+        roomsDevices[assignedRoomName].push(device);
+        return;
       }
 
-      deviceRooms[deviceRoom].push(device);
+      roomsDevices[assignedRoomName] = [device];
     });
 
-    return deviceRooms;
+    return roomsDevices;
   }, [devices, rooms]);
 
   return (
     <section className='flex flex-wrap gap-4'>
-      <AddRoom className='mb-1' />
+      <AddRoom />
       <CustomLoader
         isFetching={isFetching}
         isLoading={isLoading}
         error={error}
       />
-      <div className='flex w-full flex-wrap'>
-        {/* TODO: consider empty rooms to still show up */}
-        {Object.entries(devicesByRoom).map(([roomName, roomDevices]) => (
+      <div className='flex w-full flex-wrap gap-y-4'>
+        {Object.entries(roomsByDevices).map(([roomName, roomDevices]) => (
           <div className='flex w-full flex-wrap gap-2' key={uuid()}>
             <CustomHeading>{roomName}</CustomHeading>
-            {roomDevices.map(({ ip, name, type, online, roomId }) => (
-              <DeviceRenderer
-                key={ip}
-                name={name}
-                ip={ip}
-                type={type}
-                online={online}
-                roomId={roomId}
-              />
-            ))}
+            {!roomDevices.length ? (
+              <p className='text-muted-foreground'>No assigned devices</p>
+            ) : (
+              roomDevices.map(({ ip, name, type, online, roomId }) => (
+                <DeviceRenderer
+                  key={ip}
+                  name={name}
+                  ip={ip}
+                  type={type}
+                  online={online}
+                  roomId={roomId}
+                />
+              ))
+            )}
           </div>
         ))}
       </div>

@@ -18,7 +18,6 @@ interface AddDevice {
   selectOptions: addDeviceSelectOptionsType;
 }
 
-//TODO: FIX Select problem inside Dialog component
 const AddDeviceSelect = ({
   label,
   name,
