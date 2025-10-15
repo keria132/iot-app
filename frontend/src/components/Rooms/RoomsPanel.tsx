@@ -61,7 +61,7 @@ const RoomsPanel = () => {
             ) : (
               roomDevices.map(({ ip, name, type, online, roomId }) => (
                 <DeviceRenderer
-                  key={ip}
+                  key={uuid()}
                   name={name}
                   ip={ip}
                   type={type}

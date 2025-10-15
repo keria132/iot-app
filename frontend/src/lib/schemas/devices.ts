@@ -1,9 +1,10 @@
 import { z } from 'zod';
+import { DeviceType } from '../types/global';
 
 export const AddDeviceSchema = z.object({
   name: z.string().trim().min(1, 'Device name is required'),
   ip: z.ipv4(),
-  type: z.string().trim().min(1, 'Device type is required'), //TODO: Device type as enum
+  type: z.enum(DeviceType, 'Invalid device type'),
   room: z.string().optional(),
 });
 
