@@ -30,12 +30,4 @@ export interface SetRelayStatusPayload {
   status: boolean;
 }
 
-//TODO: consider typed query keys
-// export enum QueryKeys {
-//   Devices = 'devices',
-//   Rooms = 'rooms',
-//   Relay = 'Relay',
-//   DHTSensor = 'DHTSensor',
-// }
-
 export type addDeviceSelectOptionsType = typeof deviceTypeSelectOptions;
