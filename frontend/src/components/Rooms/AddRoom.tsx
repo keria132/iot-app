@@ -24,7 +24,6 @@ const AddRoom = ({ className }: { className?: string }) => {
     mutationFn: addRoom,
     queryKey: ['rooms'],
     successMessage: 'Room successfully added!',
-    toasterId: 'addRoom',
   });
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -52,9 +51,7 @@ const AddRoom = ({ className }: { className?: string }) => {
           <form className='flex flex-col gap-y-6' onSubmit={handleSubmit}>
             <DialogHeader>
               <DialogTitle>Create new room</DialogTitle>
-              <DialogDescription>
-                Create and add new room to your hub
-              </DialogDescription>
+              <DialogDescription>Create and add new room to your hub</DialogDescription>
             </DialogHeader>
             <div className='flex flex-col gap-4'>
               <div className='flex flex-col gap-2'>

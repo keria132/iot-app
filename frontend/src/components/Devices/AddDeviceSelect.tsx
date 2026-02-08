@@ -1,14 +1,6 @@
 import { addDeviceSelectOptionsType } from '@/lib/types/global';
 import { Label } from '../ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '../ui/select';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '../ui/select';
 
 interface AddDevice {
   label: string;
@@ -18,13 +10,7 @@ interface AddDevice {
   selectOptions: addDeviceSelectOptionsType;
 }
 
-const AddDeviceSelect = ({
-  label,
-  name,
-  id,
-  placeholder,
-  selectOptions,
-}: AddDevice) => (
+const AddDeviceSelect = ({ label, name, id, placeholder, selectOptions }: AddDevice) => (
   <div className='flex flex-col gap-2'>
     <Label htmlFor={id}>{label}</Label>
     <Select name={name}>
@@ -34,16 +20,10 @@ const AddDeviceSelect = ({
       <SelectContent position='popper' modal={false}>
         <SelectGroup>
           <SelectLabel>
-            {Object.keys(selectOptions.options).length
-              ? selectOptions.label
-              : 'No rooms available'}
+            {Object.keys(selectOptions.options).length ? selectOptions.label : 'No rooms available'}
           </SelectLabel>
           {selectOptions.options.map(({ itemName, itemValue }) => (
-            <SelectItem
-              className='cursor-pointer'
-              value={itemValue}
-              key={itemValue}
-            >
+            <SelectItem className='cursor-pointer' value={itemValue} key={itemValue}>
               {itemName}
             </SelectItem>
           ))}

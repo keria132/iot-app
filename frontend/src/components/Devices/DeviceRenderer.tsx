@@ -13,17 +13,10 @@ const devicesComponents = {
 //TODO: consider avoiding prop drilling there
 const DeviceRenderer = ({ name, ip, type, roomId }: Device) => {
   const Device = devicesComponents[type];
-  const {
-    data: rooms = [],
-    isFetching,
-    isLoading,
-  } = useQuery(roomsQueryOptions());
+  const { data: rooms = [], isFetching, isLoading } = useQuery(roomsQueryOptions());
 
   const roomName = useMemo(
-    () =>
-      isFetching || isLoading
-        ? 'Loading...'
-        : rooms.find(room => room.uuid === roomId)?.name || 'Unsorted',
+    () => (isFetching || isLoading ? 'Loading...' : rooms.find(room => room.uuid === roomId)?.name || 'Unsorted'),
     [rooms, roomId, isFetching, isLoading]
   );
 

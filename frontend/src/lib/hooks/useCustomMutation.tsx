@@ -5,30 +5,33 @@ interface UseCustomMutationProps<MutationPayload> {
   mutationFn: (payload: MutationPayload) => Promise<void>;
   queryKey: string[];
   successMessage: string;
-  toasterId: string;
 }
 
 const useCustomMutation = <MutationPayload,>({
   mutationFn,
   queryKey,
   successMessage,
-  toasterId,
 }: UseCustomMutationProps<MutationPayload>) => {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  const mutation = useMutation({
     mutationFn,
-    onMutate: () => {
-      toast.loading('Adding device...', { id: toasterId });
-    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKey });
-      toast.success(successMessage, { id: toasterId });
-    },
-    onError: error => {
-      toast.error('Error: ' + error.message, { id: toasterId });
     },
   });
+
+  const mutationAsync = (payload: MutationPayload) =>
+    toast.promise(mutation.mutateAsync(payload), {
+      loading: 'Processing...',
+      success: successMessage,
+      error: (error: Error) => 'Error: ' + error.message,
+    });
+
+  return {
+    ...mutation,
+    mutate: mutationAsync,
+  };
 };
 
 export default useCustomMutation;

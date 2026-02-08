@@ -19,24 +19,18 @@ import useAssignRoomMutation from '@/lib/hooks/useAssignRoomMutation';
 import useCustomMutation from '@/lib/hooks/useCustomMutation';
 import { deleteDevice } from '@/lib/services/devices';
 
-const DeviceMenu = ({
-  name,
-  ip,
-  roomId,
-}: Omit<DeviceModuleProps, 'roomName'>) => {
+const DeviceMenu = ({ name, ip, roomId }: Omit<DeviceModuleProps, 'roomName'>) => {
   const { data: rooms = [] } = useQuery(roomsQueryOptions());
   const deleteDeviceMutation = useCustomMutation({
     mutationFn: deleteDevice,
     queryKey: ['devices'],
     successMessage: 'Device successfully deleted!',
-    toasterId: 'deleteDevice',
   });
   const assignRoomMutation = useAssignRoomMutation();
 
   const handleDeleteDevice = () => deleteDeviceMutation.mutate(ip);
 
-  const handleAssignRoom = (uuid: string) =>
-    assignRoomMutation.mutate({ deviceIp: ip, roomId: uuid });
+  const handleAssignRoom = (uuid: string) => assignRoomMutation.mutate({ deviceIp: ip, roomId: uuid });
 
   return (
     <DropdownMenu>
@@ -65,8 +59,7 @@ const DeviceMenu = ({
         </DropdownMenuSub>
         <DropdownMenuItem
           onClick={handleDeleteDevice}
-          variant='destructive'
-          className='cursor-pointer'
+          className='text-destructive focus:bg-destructive/10 cursor-pointer'
         >
           Delete
         </DropdownMenuItem>

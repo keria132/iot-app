@@ -11,27 +11,18 @@ import DeviceRenderer from '../Devices/DeviceRenderer';
 import CustomLoader from '../ui/custom/custom-loader';
 
 const RoomsPanel = () => {
-  const {
-    data: devices = [],
-    isFetching,
-    isLoading,
-    error,
-  } = useQuery(devicesQueryOptions());
+  const { data: devices = [], isFetching, isLoading, error } = useQuery(devicesQueryOptions());
   const { data: rooms = [] } = useQuery(roomsQueryOptions());
 
   const roomsByDevices = useMemo(() => {
-    const roomsDevices = rooms.reduce<Record<string, Device[]>>(
-      (accumulator, { name }) => {
-        accumulator[name] = [];
+    const roomsDevices = rooms.reduce<Record<string, Device[]>>((accumulator, { name }) => {
+      accumulator[name] = [];
 
-        return accumulator;
-      },
-      {}
-    );
+      return accumulator;
+    }, {});
 
     devices.forEach(device => {
-      const assignedRoomName =
-        rooms.find(({ uuid }) => uuid === device.roomId)?.name ?? 'Unsorted';
+      const assignedRoomName = rooms.find(({ uuid }) => uuid === device.roomId)?.name ?? 'Unsorted';
 
       if (roomsDevices[assignedRoomName]) {
         roomsDevices[assignedRoomName].push(device);
@@ -47,11 +38,7 @@ const RoomsPanel = () => {
   return (
     <section className='flex flex-wrap gap-4'>
       <AddRoom />
-      <CustomLoader
-        isFetching={isFetching}
-        isLoading={isLoading}
-        error={error}
-      />
+      <CustomLoader isFetching={isFetching} isLoading={isLoading} error={error} />
       <div className='flex w-full flex-wrap gap-y-4'>
         {Object.entries(roomsByDevices).map(([roomName, roomDevices]) => (
           <div className='flex w-full flex-wrap gap-2' key={uuid()}>
@@ -60,14 +47,7 @@ const RoomsPanel = () => {
               <p className='text-muted-foreground'>No assigned devices</p>
             ) : (
               roomDevices.map(({ ip, name, type, online, roomId }) => (
-                <DeviceRenderer
-                  key={uuid()}
-                  name={name}
-                  ip={ip}
-                  type={type}
-                  online={online}
-                  roomId={roomId}
-                />
+                <DeviceRenderer key={uuid()} name={name} ip={ip} type={type} online={online} roomId={roomId} />
               ))
             )}
           </div>

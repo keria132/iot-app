@@ -16,12 +16,7 @@ const deviceTypeName: Record<string, string> = {
 };
 
 const DevicesPanel = () => {
-  const {
-    data: devices = [],
-    isFetching,
-    isLoading,
-    error,
-  } = useQuery(devicesQueryOptions());
+  const { data: devices = [], isFetching, isLoading, error } = useQuery(devicesQueryOptions());
 
   const devicesByType = useMemo(() => {
     const deviceTypes: Record<DeviceType, Device[]> = {
@@ -37,29 +32,16 @@ const DevicesPanel = () => {
   return (
     <section className='flex flex-wrap gap-4'>
       <AddDevice />
-      <CustomLoader
-        isFetching={isFetching}
-        isLoading={isLoading}
-        error={error}
-      />
+      <CustomLoader isFetching={isFetching} isLoading={isLoading} error={error} />
       <div className='flex w-full flex-wrap gap-y-4'>
         {Object.entries(devicesByType).map(([deviceType, devicesGroup]) => {
           if (!devicesGroup.length) return null;
 
           return (
             <div className='flex w-full flex-wrap gap-2' key={uuid()}>
-              {devicesGroup.length !== 0 && (
-                <CustomHeading>{deviceTypeName[deviceType]}</CustomHeading>
-              )}
+              {devicesGroup.length !== 0 && <CustomHeading>{deviceTypeName[deviceType]}</CustomHeading>}
               {devicesGroup.map(({ name, ip, type, online, roomId }) => (
-                <DeviceRenderer
-                  key={ip}
-                  name={name}
-                  ip={ip}
-                  type={type}
-                  online={online}
-                  roomId={roomId}
-                />
+                <DeviceRenderer key={ip} name={name} ip={ip} type={type} online={online} roomId={roomId} />
               ))}
             </div>
           );
@@ -68,23 +50,5 @@ const DevicesPanel = () => {
     </section>
   );
 };
-
-{
-  /* <div className='flex w-full flex-wrap gap-2' key={uuid()}>
-            {devicesGroup.length !== 0 && (
-              <CustomHeading>{deviceTypeName[deviceType]}</CustomHeading>
-            )}
-            {devicesGroup.map(({ name, ip, type, online, roomId }) => (
-              <DeviceRenderer
-                key={ip}
-                name={name}
-                ip={ip}
-                type={type}
-                online={online}
-                roomId={roomId}
-              />
-            ))}
-          </div> */
-}
 
 export default DevicesPanel;

@@ -11,9 +11,7 @@ const CustomLoader = ({ isLoading, isFetching, error }: CustomLoaderProps) => (
     {isFetching || isLoading ? (
       <Loader className='h-10 animate-spin' />
     ) : (
-      error && (
-        <h3 className='text-destructive flex items-center'>{`Failed to load devices: ${error?.message}`}</h3>
-      )
+      error && <h3 className='text-destructive flex items-center'>{`Failed to load devices: ${error?.message}`}</h3>
     )}
   </div>
 );

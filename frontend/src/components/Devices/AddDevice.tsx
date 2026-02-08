@@ -29,7 +29,6 @@ const AddDevice = ({ className }: { className?: string }) => {
     mutationFn: addDevice,
     queryKey: ['devices'],
     successMessage: 'Device successfully added!',
-    toasterId: 'addDevice',
   });
   const { data: rooms = [] } = useQuery(roomsQueryOptions());
 

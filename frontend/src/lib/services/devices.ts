@@ -38,8 +38,6 @@ export const deleteDevice = async (deviceIp: string) => {
   });
 
   if (!response.ok) {
-    throw new Error(
-      `Request error! Status: ${RESPONSE_STATUS[response.status] ?? response.status}`
-    );
+    throw new Error(`Request error! Status: ${RESPONSE_STATUS[response.status] ?? response.status}`);
   }
 };
