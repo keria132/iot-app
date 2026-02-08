@@ -1,4 +1,4 @@
-import { newDeviceTypeSelectItems } from '@/components/Devices/constants';
+import { deviceTypeSelectOptions } from '@/components/Devices/constants';
 
 export interface DeviceModuleProps {
   ip: string;
@@ -30,12 +30,4 @@ export interface SetRelayStatusPayload {
   status: boolean;
 }
 
-//TODO: consider typed query keys
-// export enum QueryKeys {
-//   Devices = 'devices',
-//   Rooms = 'rooms',
-//   Relay = 'Relay',
-//   DHTSensor = 'DHTSensor',
-// }
-
-export type addDeviceItemsGroupType = typeof newDeviceTypeSelectItems;
+export type addDeviceSelectOptionsType = typeof deviceTypeSelectOptions;

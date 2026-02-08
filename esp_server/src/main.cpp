@@ -8,8 +8,8 @@
 #include <LittleFS.h>
 #include <vector>
 
-#define WIFI_SSID "Tobik_Hata_EXT"
-#define WIFI_PASSWORD "P4npYfYS"
+#define WIFI_SSID "wifi_ssid"
+#define WIFI_PASSWORD "wifi_pass"
 
 const char *ssid = WIFI_SSID;
 const char *password = WIFI_PASSWORD;
@@ -32,7 +32,8 @@ struct Room {
 std::vector<Device> devices;
 std::vector<Room> rooms;
 
-IPAddress local_IP(192, 168, 0, 100);
+//192, 168, 0, 100
+IPAddress local_IP(192, 168, 9, 231);
 IPAddress gateway(192, 168, 0, 1);
 IPAddress subnet(255, 255, 255, 0);
 
@@ -65,13 +66,28 @@ AsyncCallbackJsonWebHandler* devicePostHandler = new AsyncCallbackJsonWebHandler
       return;
     }
 
+    if (roomId != "") {
+      bool exists = false;
+      for (const auto& r : rooms) {
+        if (r.uuid == roomId) {
+          exists = true;
+          break;
+        }
+      }
+      
+      if (!exists) {
+        request->send(404, "text/plain", "Invalid roomId");
+        return;
+      }
+    }
+
     for (const auto& device : devices) {
       if (device.ip == ip) {
         request->send(409, "text/plain", "Device with this IP already exists");
         return;
       }
     }
-
+    
     addDevice(name, ip, type, roomId);
     request->send(200, "text/plain", "Device added");
   }

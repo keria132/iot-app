@@ -15,8 +15,11 @@ import { Label } from '../ui/label';
 import { v4 as uuid } from 'uuid';
 import useCustomMutation from '@/lib/hooks/useCustomMutation';
 import { addRoom } from '@/lib/services/rooms';
+import { AddRoomSchema } from '@/lib/schemas';
+import { toast } from 'sonner';
+import { validateFormData } from '@/lib/helpers/validateFormData';
 
-const AddRoom = ({ className }: { className: string }) => {
+const AddRoom = ({ className }: { className?: string }) => {
   const addRoomMutation = useCustomMutation({
     mutationFn: addRoom,
     queryKey: ['rooms'],
@@ -27,13 +30,15 @@ const AddRoom = ({ className }: { className: string }) => {
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget);
-    const { name } = Object.fromEntries(formData.entries());
+    formData.append('uuid', uuid());
+    const parsed = validateFormData(formData, AddRoomSchema);
+    if (!parsed.status) {
+      toast.error(parsed.error);
 
-    //TODO: GET RID OF TYPE CASTING AND ADD VALIDATION
-    addRoomMutation.mutate({
-      name: name as string,
-      uuid: uuid(),
-    });
+      return;
+    }
+
+    addRoomMutation.mutate(parsed.data);
   };
 
   return (
@@ -46,9 +51,7 @@ const AddRoom = ({ className }: { className: string }) => {
           <form className='flex flex-col gap-y-6' onSubmit={handleSubmit}>
             <DialogHeader>
               <DialogTitle>Create new room</DialogTitle>
-              <DialogDescription>
-                Create and add new room to your hub
-              </DialogDescription>
+              <DialogDescription>Create and add new room to your hub</DialogDescription>
             </DialogHeader>
             <div className='flex flex-col gap-4'>
               <div className='flex flex-col gap-2'>

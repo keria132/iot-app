@@ -1,10 +1,9 @@
 import { DeviceType } from '@/lib/types/global';
-import { v4 as uuid } from 'uuid';
 
 export const CONDITIONER_MIN_TEMP = 10;
 export const CONDITIONER_MAX_TEMP = 30;
 
-export const newDeviceInputFields = [
+export const deviceInputFields = [
   {
     label: 'Device Name',
     id: 'deviceName',
@@ -19,9 +18,9 @@ export const newDeviceInputFields = [
   },
 ];
 
-export const newDeviceTypeSelectItems = {
+export const deviceTypeSelectOptions = {
   label: 'Device types',
-  items: [
+  options: [
     {
       itemName: 'DHT Sensor',
       itemValue: String(DeviceType.DHTSensor),
@@ -29,16 +28,6 @@ export const newDeviceTypeSelectItems = {
     {
       itemName: 'Relay',
       itemValue: String(DeviceType.Relay),
-    },
-  ],
-};
-
-export const mockNewDeviceTypeSelectItems = {
-  label: 'Available rooms',
-  items: [
-    {
-      itemName: 'Some-room',
-      itemValue: uuid(),
     },
   ],
 };

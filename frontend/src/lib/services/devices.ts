@@ -5,6 +5,7 @@ interface AddDevicePayload {
   name: string;
   ip: string;
   type: string;
+  room?: string;
 }
 
 export const addDevice = async (device: AddDevicePayload) => {
@@ -37,8 +38,6 @@ export const deleteDevice = async (deviceIp: string) => {
   });
 
   if (!response.ok) {
-    throw new Error(
-      `Request error! Status: ${RESPONSE_STATUS[response.status] ?? response.status}`
-    );
+    throw new Error(`Request error! Status: ${RESPONSE_STATUS[response.status] ?? response.status}`);
   }
 };

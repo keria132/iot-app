@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 
 interface UseCustomMutationProps<MutationPayload> {
   mutationFn: (payload: MutationPayload) => Promise<void>;
-  queryKey: string[]; //TODO: consider typed keys - QueryKeys[]
+  queryKey: string[];
   successMessage: string;
 }
 

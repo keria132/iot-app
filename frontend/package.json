@@ -39,7 +39,8 @@
     "sonner": "^2.0.5",
     "tailwind-merge": "^3.0.2",
     "tw-animate-css": "^1.2.4",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.0",
+    "zod": "^4.1.5"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
