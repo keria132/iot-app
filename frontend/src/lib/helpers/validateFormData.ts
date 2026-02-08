@@ -7,7 +7,10 @@ export const validateFormData = <T extends ZodType>(formData: FormData, schema: 
   const parsedFormData = schema.safeParse(rawFormData);
 
   if (!parsedFormData.success) {
-    const errorMessages = parsedFormData.error.issues.reduce((acc, curr) => acc + curr.message + ', ', '');
+    const errorMessages = parsedFormData.error.issues.reduce(
+      (acc, curr, index) => acc + curr.message + (index < parsedFormData.error.issues.length - 1 ? ', ' : ''),
+      ''
+    );
 
     return { status: false, error: errorMessages };
   }
