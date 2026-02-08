@@ -14,16 +14,24 @@ const useCustomMutation = <MutationPayload,>({
 }: UseCustomMutationProps<MutationPayload>) => {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  const mutation = useMutation({
     mutationFn,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKey });
-      toast.success(successMessage);
-    },
-    onError: error => {
-      toast.error('Error: ' + error.message);
     },
   });
+
+  const mutationAsync = (payload: MutationPayload) =>
+    toast.promise(mutation.mutateAsync(payload), {
+      loading: 'Processing...',
+      success: successMessage,
+      error: (error: Error) => 'Error: ' + error.message,
+    });
+
+  return {
+    ...mutation,
+    mutate: mutationAsync,
+  };
 };
 
 export default useCustomMutation;
