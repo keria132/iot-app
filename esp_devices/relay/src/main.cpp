@@ -1,19 +1,16 @@
+#include "config.h"
 #include <Arduino.h>
 #include <ArduinoJson.h>
 #include <ESP8266WiFi.h>
 #include <ESPAsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 
-#define WIFI_SSID "Tobik_Hata_EXT"
-#define WIFI_PASSWORD "P4npYfYS"
-#define RELAYPIN 4
-
 const char *ssid = WIFI_SSID;
 const char *password = WIFI_PASSWORD;
 
-IPAddress local_IP(192, 168, 0, 102);
-IPAddress gateway(192, 168, 0, 1);
-IPAddress subnet(255, 255, 255, 0);
+IPAddress local_IP(DEVICE_IP);
+IPAddress gateway(GATEWAY_IP);
+IPAddress subnet(SUBNET_MASK);
 
 AsyncWebServer server(80);
 
@@ -21,7 +18,7 @@ void connectWiFi();
 
 void setup() {
   Serial.begin(115200);
-  pinMode(RELAYPIN, OUTPUT);
+  pinMode(DEVICE_PIN, OUTPUT);
 
   connectWiFi();
   WiFi.setAutoReconnect(true);

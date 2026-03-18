@@ -10,9 +10,7 @@ const useAssignRoomMutation = () => {
     mutationFn: assignRoom,
     onSuccess: (_, { deviceIp, roomId }) => {
       queryClient.setQueryData<Device[]>(['devices'], oldDevices =>
-        oldDevices?.map(device =>
-          device.ip === deviceIp ? { ...device, roomId } : device
-        )
+        oldDevices?.map(device => (device.ip === deviceIp ? { ...device, roomId } : device))
       );
 
       queryClient.invalidateQueries({ queryKey: ['devices'] });

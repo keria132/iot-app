@@ -25,9 +25,4 @@ export interface Room {
   uuid: string;
 }
 
-export interface SetRelayStatusPayload {
-  ip: string;
-  status: boolean;
-}
-
 export type addDeviceSelectOptionsType = typeof deviceTypeSelectOptions;

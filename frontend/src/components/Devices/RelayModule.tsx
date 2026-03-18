@@ -1,3 +1,5 @@
+'use client';
+
 import { Split } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { getRelayStatus } from '@/lib/services/relays';
@@ -14,7 +16,7 @@ const RelayModule = ({ ip, name, roomName, roomId }: DeviceModuleProps) => {
     error,
   } = useQuery({
     queryKey: ['Relay', ip],
-    queryFn: async () => getRelayStatus('http://' + ip),
+    queryFn: async () => getRelayStatus(ip),
     refetchInterval: 7000,
     staleTime: 20000,
     initialData: { relayStatus: false, signalStrength: -100 },
@@ -22,8 +24,7 @@ const RelayModule = ({ ip, name, roomName, roomId }: DeviceModuleProps) => {
 
   const relaySwitchMutation = useRelaySwitchMutation();
 
-  const handleRelaySwitch = (isChecked: boolean) =>
-    relaySwitchMutation.mutate({ ip, status: isChecked });
+  const handleRelaySwitch = (isChecked: boolean) => relaySwitchMutation.mutate({ ip, status: isChecked });
 
   return (
     <DeviceCard

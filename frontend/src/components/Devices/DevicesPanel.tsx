@@ -7,7 +7,6 @@ import { useMemo } from 'react';
 import { Device, DeviceType } from '@/lib/types/global';
 import { devicesQueryOptions } from '@/lib/constants';
 import CustomHeading from '../ui/custom/custom-heading';
-import { v4 as uuid } from 'uuid';
 import CustomLoader from '../ui/custom/custom-loader';
 
 const deviceTypeName: Record<string, string> = {
@@ -38,7 +37,7 @@ const DevicesPanel = () => {
           if (!devicesGroup.length) return null;
 
           return (
-            <div className='flex w-full flex-wrap gap-2' key={uuid()}>
+            <div className='flex w-full flex-wrap gap-2' key={deviceType}>
               {devicesGroup.length !== 0 && <CustomHeading>{deviceTypeName[deviceType]}</CustomHeading>}
               {devicesGroup.map(({ name, ip, type, online, roomId }) => (
                 <DeviceRenderer key={ip} name={name} ip={ip} type={type} online={online} roomId={roomId} />

@@ -1,3 +1,5 @@
+'use client';
+
 import { Device, DeviceType } from '@/lib/types/global';
 import RelayModule from './RelayModule';
 import DHTModule from './DHTModule';
@@ -10,7 +12,6 @@ const devicesComponents = {
   [DeviceType.Relay]: RelayModule,
 };
 
-//TODO: consider avoiding prop drilling there
 const DeviceRenderer = ({ name, ip, type, roomId }: Device) => {
   const Device = devicesComponents[type];
   const { data: rooms = [], isFetching, isLoading } = useQuery(roomsQueryOptions());

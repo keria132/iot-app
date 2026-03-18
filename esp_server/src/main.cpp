@@ -1,3 +1,4 @@
+#include "config.h"
 #include <Arduino.h>
 #include <ArduinoJson.h>
 #include <ESP8266WiFi.h>
@@ -7,9 +8,6 @@
 #include <ESP8266HTTPClient.h>
 #include <LittleFS.h>
 #include <vector>
-
-#define WIFI_SSID "wifi_ssid"
-#define WIFI_PASSWORD "wifi_pass"
 
 const char *ssid = WIFI_SSID;
 const char *password = WIFI_PASSWORD;
@@ -32,10 +30,9 @@ struct Room {
 std::vector<Device> devices;
 std::vector<Room> rooms;
 
-//192, 168, 0, 100
-IPAddress local_IP(192, 168, 9, 231);
-IPAddress gateway(192, 168, 0, 1);
-IPAddress subnet(255, 255, 255, 0);
+IPAddress local_IP(DEVICE_IP);
+IPAddress gateway(GATEWAY_IP);
+IPAddress subnet(SUBNET_MASK);
 
 void connectWiFi();
 void listDir(const char *dirname);
@@ -221,14 +218,13 @@ void setup() {
       }
     } else {
       Serial.println("Deleting all rooms");
-      // deleteAllRooms() TODO: delete all rooms here
       
-      request->send(200, "text/plain", "All devices deleted");
+      request->send(200, "text/plain", "All rooms deleted");
     }
   });
 
   server.on("/api/wipe", HTTP_DELETE, [](AsyncWebServerRequest *request) {
-    if (LittleFS.remove("/data.json")) request->send(200, "text/plain", "Wipe successful");;
+    if (LittleFS.remove("/data.json")) request->send(200, "text/plain", "Wipe successful");
   });
 
   //POST AsyncJson handlers
@@ -241,10 +237,7 @@ void setup() {
 
       Serial.println("Preflight cors");
       AsyncWebServerResponse *response = request->beginResponse(200);
-      // TODO: ADD SECURITY FEATURES LATER
-      // response->addHeader("Access-Control-Allow-Origin", "*");
-      // response->addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-      // response->addHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+      
       request->send(response);
     } else {
       request->send(404, "text/plain", "Not found");

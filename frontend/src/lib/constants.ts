@@ -13,17 +13,6 @@ export const defaultHeaders = {
   'Content-Type': 'application/json',
 };
 
-// const MAX_STALE_TIME = 240000; // 4 minutes
-
-// const maxStaleQueryOptions = {
-//   staleTime: MAX_STALE_TIME,
-// };
-
-// const defaultQueryOptions = {
-//   staleTime: 5000,
-//   refetchInterval: 7000,
-// };
-
 const devQueryOptions = {
   retry: 0,
 };

@@ -1,14 +1,15 @@
-import { SetRelayStatusPayload } from '../types/global';
-
 interface GetRelayStatusPayload {
   relayStatus: boolean;
   signalStrength: number;
 }
 
-export const getRelayStatus = async (
-  deviceIp: string
-): Promise<GetRelayStatusPayload> => {
-  const response = await fetch(deviceIp + '/relayStatus');
+export interface SetRelayStatusPayload {
+  ip: string;
+  status: boolean;
+}
+
+export const getRelayStatus = async (ip: string): Promise<GetRelayStatusPayload> => {
+  const response = await fetch(`http://${ip}/relayStatus`);
   if (!response.ok) {
     throw new Error(`Request error! Error status: ${response.status}`);
   }

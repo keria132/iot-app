@@ -21,14 +21,9 @@ export default function RootLayout({
   return (
     <html lang='en' suppressHydrationWarning className='dark'>
       <body className={`${manrope.className} antialiased`}>
-        <ThemeProvider
-          attribute='class'
-          defaultTheme='system'
-          enableSystem
-          disableTransitionOnChange
-        >
+        <ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
           <ReactQueryProvider>{children}</ReactQueryProvider>
-          <Toaster />
+          <Toaster richColors />
         </ThemeProvider>
       </body>
     </html>

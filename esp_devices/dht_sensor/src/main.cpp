@@ -1,3 +1,4 @@
+#include "config.h"
 #include <Arduino.h>
 #include <ArduinoJson.h>
 #include <ESP8266WiFi.h>
@@ -5,20 +6,17 @@
 #include <ESPAsyncWebServer.h>
 #include <DHT.h>
 
-#define WIFI_SSID "Tobik_Hata_EXT"
-#define WIFI_PASSWORD "P4npYfYS"
 #define DHTTYPE DHT22
-#define DHTPIN 5
 
 const char *ssid = WIFI_SSID;
 const char *password = WIFI_PASSWORD;
 
-IPAddress local_IP(192, 168, 0, 101);
-IPAddress gateway(192, 168, 0, 1);
-IPAddress subnet(255, 255, 255, 0);
+IPAddress local_IP(DEVICE_IP);
+IPAddress gateway(GATEWAY_IP);
+IPAddress subnet(SUBNET_MASK);
 
 AsyncWebServer server(80);
-DHT dht(DHTPIN, DHTTYPE);
+DHT dht(DEVICE_PIN, DHTTYPE);
 float temp = 0.0;
 float hum = 0.0;
 unsigned long lastReadTime = 0;
