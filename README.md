@@ -19,7 +19,7 @@ Built with a Next.js frontend and a firmware hub that coordinates device registr
 - **Relay control** - toggle GPIO relay modules on/off with optimistic UI updates
 - **Sensor monitoring** - real-time temperature and humidity readings from DHT22 modules (polled)
 
-## Frontend deatures
+## Frontend features
 
 - **UI Dashboards** - dashboards to manage devices and rooms (in progress)
 - **Dark / light theme** - system-aware, switchable from the header
@@ -98,7 +98,13 @@ iot-app/
 
 ### 1. Configure hardware
 
-Each firmware project requires a `config.h` file (gitignored).
+Each firmware project requires a `config.h` file (gitignored). A `config.example.h` provided as an example.
+
+```bash
+cp esp_server/src/config.example.h    esp_server/src/config.h
+cp esp_devices/relay/src/config.example.h    esp_devices/relay/src/config.h
+cp esp_devices/dht_sensor/src/config.example.h  esp_devices/dht_sensor/src/config.h
+```
 
 Edit each `config.h` with your Wi-Fi credentials and the static IP you want to assign to that board. The device IPs must be free on your network and must match what you register in the dashboard.
 
