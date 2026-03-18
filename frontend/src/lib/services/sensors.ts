@@ -4,9 +4,7 @@ interface GetDHTSensorPayload {
   signalStrength: number;
 }
 
-export const getDHTSensorData = async (
-  deviceIp: string
-): Promise<GetDHTSensorPayload> => {
+export const getDHTSensorData = async (deviceIp: string): Promise<GetDHTSensorPayload> => {
   const response = await fetch(deviceIp + '/getSensorData');
 
   if (!response.ok) {

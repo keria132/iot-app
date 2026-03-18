@@ -7,7 +7,6 @@ export default function Main() {
       <Header />
       <main className='container m-auto mt-6'>
         <Home />
-        <p></p>
       </main>
     </div>
   );

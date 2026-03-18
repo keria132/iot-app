@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { setRelayStatus } from '../services/relays';
-import { SetRelayStatusPayload } from '../types/global';
+import { setRelayStatus, SetRelayStatusPayload } from '../services/relays';
 
 const useRelaySwitchMutation = () => {
   const queryClient = useQueryClient();
@@ -30,10 +29,6 @@ const useRelaySwitchMutation = () => {
 
       toast.error('Error: ' + error.message);
     },
-
-    //TODO: refetch after mutation is done
-    // onSettled: newState =>
-    //   queryClient.invalidateQueries({ queryKey: ['Relay', newState?.ip] }),
   });
 };
 

@@ -6,7 +6,6 @@ import { Device } from '@/lib/types/global';
 import { useMemo } from 'react';
 import { devicesQueryOptions, roomsQueryOptions } from '@/lib/constants';
 import CustomHeading from '../ui/custom/custom-heading';
-import { v4 as uuid } from 'uuid';
 import DeviceRenderer from '../Devices/DeviceRenderer';
 import CustomLoader from '../ui/custom/custom-loader';
 
@@ -41,13 +40,13 @@ const RoomsPanel = () => {
       <CustomLoader isFetching={isFetching} isLoading={isLoading} error={error} />
       <div className='flex w-full flex-wrap gap-y-4'>
         {Object.entries(roomsByDevices).map(([roomName, roomDevices]) => (
-          <div className='flex w-full flex-wrap gap-2' key={uuid()}>
+          <div className='flex w-full flex-wrap gap-2' key={roomName}>
             <CustomHeading>{roomName}</CustomHeading>
             {!roomDevices.length ? (
               <p className='text-muted-foreground'>No assigned devices</p>
             ) : (
               roomDevices.map(({ ip, name, type, online, roomId }) => (
-                <DeviceRenderer key={uuid()} name={name} ip={ip} type={type} online={online} roomId={roomId} />
+                <DeviceRenderer key={ip} name={name} ip={ip} type={type} online={online} roomId={roomId} />
               ))
             )}
           </div>
